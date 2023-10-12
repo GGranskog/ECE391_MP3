@@ -1,4 +1,5 @@
 #include "idt.h"
+#include "exceptions.h"
 #include "x86_desc.h"
 
 void
@@ -22,4 +23,25 @@ init_idt()
 
 
     }
+
+    SET_IDT_ENTRY(idt[0], div0);
+    SET_IDT_ENTRY(idt[1], res);
+    SET_IDT_ENTRY(idt[2], nmi);
+    SET_IDT_ENTRY(idt[3], bp);
+    SET_IDT_ENTRY(idt[4], of);
+    SET_IDT_ENTRY(idt[5], br);
+    SET_IDT_ENTRY(idt[6], opcode);
+    SET_IDT_ENTRY(idt[7], notfound);
+    SET_IDT_ENTRY(idt[8], df);
+    SET_IDT_ENTRY(idt[9], cso);
+    SET_IDT_ENTRY(idt[10], itss);
+    SET_IDT_ENTRY(idt[11], snp);
+    SET_IDT_ENTRY(idt[12], ssf);
+    SET_IDT_ENTRY(idt[13], gp);
+    SET_IDT_ENTRY(idt[14], pf);
+    SET_IDT_ENTRY(idt[15], res);
+    SET_IDT_ENTRY(idt[16], fpu);
+    SET_IDT_ENTRY(idt[17], alig);
+    SET_IDT_ENTRY(idt[18], machine);
+    SET_IDT_ENTRY(idt[19], simd);
 }
