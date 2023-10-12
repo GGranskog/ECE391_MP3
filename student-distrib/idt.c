@@ -10,8 +10,8 @@ init_idt()
     {
         
         idt[i].reserved0 = 0;
-        idt[i].reserved1 = 0;
-        idt[i].reserved2 = 0;
+        idt[i].reserved1 = 1;
+        idt[i].reserved2 = 1;
         idt[i].reserved3 = 0;
         idt[i].reserved4 = 0;
 
@@ -19,5 +19,7 @@ init_idt()
         idt[i].seg_selector = KERNEL_CS;
         idt[i].dpl = 0;
         idt[i].present = 0;
+
+
     }
 }
