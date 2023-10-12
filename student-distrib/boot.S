@@ -25,7 +25,7 @@ _start:
 
 continue:
     # Load the GDT
-    LGDT gdt
+    lgdt gdt_desc
 
     # Load the IDT
     LIDT idt_desc_ptr
