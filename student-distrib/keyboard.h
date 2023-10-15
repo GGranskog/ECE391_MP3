@@ -13,8 +13,6 @@
 void keyboard_init(void);
 
 
-//Connect keybaord to terminal functions. (see terminal.c for descriptions)
-extern void get_char(char new_char);
 
 
 /* reads input from keyboard dataport when an interrupt occurs and put it to video memory */
