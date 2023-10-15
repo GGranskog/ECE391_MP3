@@ -8,7 +8,7 @@
  *  SIDE EFFECTS: Changes the idt
  */
 void
-init_idt()
+idt_init()
 {
     int i;
 
