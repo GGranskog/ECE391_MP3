@@ -11,6 +11,14 @@ uint8_t r_shift_flag  = 0;
 uint8_t ctrl_flag   = 0;    //Can be up to two (for the right and left)
 uint8_t caps_flag   = 0;
 
+//Holds the values entered by the keyboard
+static char char_buffer[BUFFER_SIZE];
+//Flag to break out of read loop.
+volatile static int enter_flag = 0;
+//Keeps track of the current location to be filled in the char_buffer
+static int char_count = 0;
+
+
 // Count to keep track of the available number of backspaces
 int num_char    = 0;
 
@@ -27,6 +35,36 @@ uint8_t check_for_modifier(uint8_t scan_code);
 void keyboard_init(void) {
     enable_irq(KEYBOARD_IRQ_NUM);
 }
+
+
+//Connect keybaord to terminal functions.
+
+void get_char(char new_char) {
+    //End the buffer with the newline and enable the enter_flag.
+    if(new_char == '\n') {
+        enter_flag = 1;
+        if(char_count >= BUFFER_SIZE)
+            char_buffer[BUFFER_SIZE - 1] = '\n';
+        else
+            char_buffer[char_count] = '\n';
+    //Clear one space of the buffer.
+    } else if(new_char == BCKSPACE) {
+        if(char_count > 0){
+            if(char_count <= BUFFER_SIZE)
+                char_buffer[char_count - 1] = ' ';
+            --char_count;
+        }
+    //Add a new character to the buffer.
+    } else if(char_count < (BUFFER_SIZE - 1)){
+        char_buffer[char_count] = new_char;
+        ++char_count;
+    }
+    //Keep track of the available number of backspaces that can be used.
+    else{
+        ++char_count;
+    }
+}
+
 
 /* extern void keyboard_handler(void);
  * Inputs: void

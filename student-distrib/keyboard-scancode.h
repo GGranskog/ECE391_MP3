@@ -74,6 +74,8 @@ char scan_to_ascii[SCANCODE_TABLE_SIZE][2] = {
 #define RELEASE_OFFSET      (0x80)
 
 #define BUFFER_MAX         (127)
+#define BUFFER_SIZE        (128)
+
 
 #define LEFT_SHIFT_PRESS    (0x2A)
 #define LEFT_SHIFT_RELEASE  (0xAA)
