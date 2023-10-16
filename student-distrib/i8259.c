@@ -31,12 +31,12 @@ void i8259_init(void) {
     outb(ICW4, SLAVE_8259_DATA);
 
 
-    // restore the masks
+/* // restore the masks
     outb(master_mask, MASTER_8259_DATA);
     outb(master_mask, SLAVE_8259_DATA);
-
+*/
     enable_irq(2);  //enables master irq2 for slave
-
+    
 }
 
 /* Enable (unmask) the specified IRQ */
