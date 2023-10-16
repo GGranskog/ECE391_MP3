@@ -114,7 +114,8 @@ void send_eoi(uint32_t irq_num) {
     }
 
     //if Slave IRQ_NUM must send EOI to master port IRQ2 and slave port
+    outb(EOI | 2, MASTER_8259_PORT);
     outb(EOI | (irq_num - 8), SLAVE_8259_PORT);
-    outb(EOI | 2, MASTER_8259_PORT);    
+     
 
 }
