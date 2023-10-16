@@ -13,8 +13,13 @@ Bug Description: When typing on the keyboard, every time a new key is pressed, t
 
  Solution:
 
-Checked the keyboard array to ensure that it correctly maps scan codes to characters for the specific keyboard layout in use.
-Verified that the scan code interpretation matches the keyboard layout being used.
+Properly set present bit for first 15 entries of IDT
+
+Bug: Keyboard typed weird characters
+Fix: use putc instead of printf in keyboard.c
+
+Bug: Exception when pressing multiple keys at the same time
+Fix: 
 
 
 Bug Log for RTC Handler:
@@ -23,10 +28,6 @@ Bug: The RTC is not generating periodic interrupts.
 
 Bug Description: The RTC handler does not trigger at regular intervals as expected
 
-Solution:
-
-Reviewed the RTC initialization code to ensure that the periodic interrupt generation is properly configured.
-Checked the handler's code to verify that it's correctly acknowledging and handling RTC interrupts.
 
 Bug Log for PIC Functions:
 
