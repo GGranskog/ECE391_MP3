@@ -20,7 +20,7 @@ idt_init()
         idt[i].reserved2 = 1;
 
         if(i >= VECTOR_INTERRUPT_START && i <= VECTOR_INTERRUPT_END)
-            itd[i].reserved3 = 0;
+            idt[i].reserved3 = 0;
         else
             idt[i].reserved3 = 1;
 
