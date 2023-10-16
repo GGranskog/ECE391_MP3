@@ -1,5 +1,5 @@
 #include "exceptions.h"
-#include <stdio.h>
+#include "lib.h"
 
 void div0()         {exceptions(0);}
 void res()          {exceptions(1);}
