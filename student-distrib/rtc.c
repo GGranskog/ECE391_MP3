@@ -44,34 +44,34 @@ int32_t set_rtc_freq(int32_t freq)
 
     switch(freq) {
         case 2:
-            changed_rate = HZ_2;
+            changed_rate = RTC_2;
             break;
         case 4:
-            changed_rate = HZ_4;
+            changed_rate = RTC_4;
             break;
         case 8:
-            changed_rate = HZ_8;
+            changed_rate = RTC_8;
             break;
         case 16:
-            changed_rate = HZ_16;
+            changed_rate = RTC_16;
             break;
         case 32:
-            changed_rate = HZ_32;
+            changed_rate = RTC_32;
             break;
         case 64:
-            changed_rate = HZ_64;
+            changed_rate = RTC_64;
             break;
         case 128:
-            changed_rate = HZ_128;
+            changed_rate = RTC_128;
             break;
         case 256:
-            changed_rate = HZ_256;
+            changed_rate = RTC_256;
             break;
         case 512:
-            changed_rate = HZ_512;
+            changed_rate = RTC_512;
             break;
         case 1024:
-            changed_rate = HZ_1024;
+            changed_rate = RTC_1024;
             break;
         default:
             return -1;
