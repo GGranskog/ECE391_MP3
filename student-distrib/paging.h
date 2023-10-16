@@ -32,7 +32,7 @@ void init_page();
 //void map_user();
 //void map_page(void *physaddr, void *virtualaddr, unsigned int flags)
 //void flush_tb();
-//extern void cr3();
+void cr3();
 //extern void new_video();
 
 #endif /* ASM */
