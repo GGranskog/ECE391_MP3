@@ -68,7 +68,7 @@ void cr3(){
     mov %%eax, %%cr0             \n\
     "
     :
-    : "a"(page_directory)
+    : "a"(page_dir)
     : "memory"
     );
 
