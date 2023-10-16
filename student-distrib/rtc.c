@@ -3,9 +3,9 @@
 
 void rtc_init()
 {
-    //cli(); // clear interrupt
-    //outb(RTC_REG_A, RTC_SELECT);
-    //outb(0x20, 0x71);
+    // cli(); // clear interrupt
+    outb(RTC_REG_A, RTC_SELECT);
+    outb(0x20, 0x71);
 
 
     outb(RTC_REG_B, RTC_SELECT);    // select register B and disable NMI
@@ -15,7 +15,7 @@ void rtc_init()
 
     enable_irq(RTC_IRQ);
     enable_irq(RTC_IRQ2);
-    //enable_irq(0);
+    // enable_irq(0);
 
     return;
 
@@ -23,7 +23,7 @@ void rtc_init()
 
 void rtc_handler()
 {
-    
+    // test_interrupts();
     cli();
     outb(RTC_REG_C, RTC_SELECT);
     inb(RTC_CMOS);

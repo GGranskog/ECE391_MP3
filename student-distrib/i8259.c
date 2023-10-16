@@ -83,14 +83,14 @@ void disable_irq(uint32_t irq_num) {
     //master disable irq
     if(irq_num < 8){
     //   master_mask = inb(MASTER_8259_DATA);
-        master_mask = master_mask |= (1 << irq_num); //set bit to 1
+        master_mask |= (1 << irq_num); //set bit to 1
 
         outb(master_mask, MASTER_8259_DATA);
     }
 
     //slave disable irq
     //slave_mask = inb(SLAVE_8259_DATA);
-   slave_mask = slave_mask |= (1 << (irq_num - 8)); //set bit to 1
+        slave_mask |= (1 << (irq_num - 8)); //set bit to 1
 
     outb(slave_mask, SLAVE_8259_DATA);
 
