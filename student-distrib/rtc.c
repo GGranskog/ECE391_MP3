@@ -1,6 +1,13 @@
 #include "rtc.h"
 #include "lib.h"
 
+
+/*
+ *  void rtc_init()
+ *  DESC: initializes the rtc
+ *  INPUTS: none
+ *  OUTPUTS: none
+ */
 void rtc_init()
 {
     // cli(); // clear interrupt
@@ -21,6 +28,13 @@ void rtc_init()
 
 }
 
+
+/*
+ * void rtc_handler()
+ * DESC: handles interrupts for rtc
+ * INPUTS: none
+ * OUTPUTS: none
+ */
 void rtc_handler()
 {
     // test_interrupts();
