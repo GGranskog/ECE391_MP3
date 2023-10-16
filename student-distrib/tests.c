@@ -46,7 +46,35 @@ int idt_test(){
 }
 
 // add more tests here
+int divide_by_zero(){
+	TEST_HEADER;
+	int result = PASS;
+	int i;
+	i = 1/0;
+	if(i) {
+        result;
+    } else {
+        result = FAIL;
+    }
+	return result;
+}
 
+int deref_null(){
+	TEST_HEADER;
+	int* p = NULL;
+	int result;
+	if (p){result = PASS;}
+	else{result = FAIL;}
+	return result;
+}
+
+
+/*
+void rtc_keyboard(){
+	keyboard_init();
+	rtc_init();
+}
+*/
 /* Checkpoint 2 tests */
 /* Checkpoint 3 tests */
 /* Checkpoint 4 tests */
@@ -57,4 +85,6 @@ int idt_test(){
 void launch_tests(){
 	TEST_OUTPUT("idt_test", idt_test());
 	// launch your tests here
+	TEST_OUTPUT("deref_null", deref_null());
+	TEST_OUTPUT("divide_by_zero", divide_by_zero());
 }

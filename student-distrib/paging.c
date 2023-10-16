@@ -39,24 +39,32 @@ void init_page() {
         page_dir[i] = 0x82; // page not used, can read/write, and User leve/free for anyone to use
         page_table[i] = 0;  // page table entry cleared for initialization
     }
-    page_table[V_IDX] = V_VIRTUAL | 3; // vid physcal to virtual, RW enabled, present
-    page_table[IDX1] = V_VIRTUAL | IDX1 | 0x3;    // page_dir[1], physical(i=1) ->virtual shifter
-    page_table[IDX2] = V_VIRTUAL | IDX2 | 0x3;
-    page_table[IDX3] = V_VIRTUAL | IDX3 | 0x3;
+    page_table[V_IDX] = V_VIRTUAL | RW | P;         // vid physcal to virtual, RW enabled, present
+    page_table[IDX1] = V_VIRTUAL | IDX1 | RW | P;   // page_dir[1], physical(i=1) ->virtual shifter
+    //page_table[IDX2] = V_VIRTUAL | IDX2 | RW | P;
+    //page_table[IDX3] = V_VIRTUAL | IDX3 | RW | P;
 
 
     // video memeory
-    page_dir[0] = ((uint32_t)page_table) | 0x3;;
+    page_dir[0] = ((uint32_t)page_table) | RW | P;;
     // kernel
     page_dir[1] = START_KERNEL | PS | RW | P; //kernel starts @ x400000, size=4KB, Supervisor, RW enabled , present
     //
-    page_dir[2] = ((uint32_t)page_table) | 0x3;
+    //page_dir[2] = ((uint32_t)page_table) | 0x3;
     //
-    page_dir[3] = ((uint32_t)page_table) | 0x3;;
+    //page_dir[3] = ((uint32_t)page_table) | 0x3;;
 
     cr3();
 }
 
+
+/*
+ *  Enabling paging. All that is needed is to load CR3 with the address of the page directory and to set 
+ *  the paging (PG) and protection (PE) bits of CR0.
+ *  Input:  NONE
+ *  Output: NONE
+ *  effects: enables paging for 32-bit
+ */
 void cr3(){
     asm volatile(
     "mov %%eax, %%cr3             \n\

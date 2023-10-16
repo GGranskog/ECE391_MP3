@@ -89,4 +89,5 @@ void exceptions(int num)
             printf("EXCEPTION: Intel Reserved");
             break;
     }
+    while(1);
 }

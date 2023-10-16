@@ -142,9 +142,9 @@ void entry(unsigned long magic, unsigned long addr) {
     /* Init the PIC */
     idt_init();
     i8259_init();
-    //rtc_init();
+    rtc_init();
     init_page();
-    //keyboard_init();
+    keyboard_init();
     /* Initialize devices, memory, filesystem, enable device interrupts on the
      * PIC, any other initialization stuff... */
 
