@@ -24,7 +24,7 @@
 //void *get_physaddr(void *virtualaddr)
 
 uint32_t page_dir[PDE]  __attribute__((aligned(PDE_SIZE)));
-uint32_t page_table[PTE] __attribute__((aligned(PDE_SIZE)))
+uint32_t page_table[PTE] __attribute__((aligned(PDE_SIZE)));
 uint32_t video_mem[PTE] __attribute__((aligned(PDE_SIZE)));
 
 void init_page();
