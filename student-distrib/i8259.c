@@ -31,10 +31,12 @@ void i8259_init(void) {
     outb(ICW4, SLAVE_8259_DATA);
 
 
-    // restore the masks
+/* // restore the masks
     outb(master_mask, MASTER_8259_DATA);
     outb(master_mask, SLAVE_8259_DATA);
-
+*/
+    enable_irq(2);  //enables master irq2 for slave
+    
 }
 
 /* Enable (unmask) the specified IRQ */
@@ -47,7 +49,8 @@ void enable_irq(uint32_t irq_num) {
     //master IRQ
     if(irq_num < 8){  //8 is max irq num
         
-        master_mask = inb(MASTER_8259_DATA) & ~(1 << irq_num); //set bit to 0
+       // master_mask = inb(MASTER_8259_DATA) 
+       master_mask = master_mask & ~(1 << irq_num); //set bit to 0
 
         outb(master_mask, MASTER_8259_DATA);
 
@@ -56,7 +59,8 @@ void enable_irq(uint32_t irq_num) {
     }
 
     //slave IRQ
-    slave_mask = inb(SLAVE_8259_DATA) & ~(1 << (irq_num - 8)); //8-15 is for slave
+   // slave_mask = inb(SLAVE_8259_DATA) 
+   slave_mask = slave_mask & ~(1 << (irq_num - 8)); //8-15 is for slave
     
     outb(slave_mask, SLAVE_8259_DATA);
 
@@ -111,6 +115,6 @@ void send_eoi(uint32_t irq_num) {
 
     //if Slave IRQ_NUM must send EOI to master port IRQ2 and slave port
     outb(EOI | (irq_num - 8), SLAVE_8259_PORT);
-    outb(EOI | 2, MASTER_8259_PORT);
+    outb(EOI | 2, MASTER_8259_PORT);    
 
 }

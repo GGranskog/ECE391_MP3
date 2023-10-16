@@ -97,33 +97,23 @@ int32_t rtc_open(const char* filename)
 }
 
 // close rtc
-int32_t rtc_close(int32_t* inode)
+int32_t rtc_close(int32_t fd)
 {
-    *inode = 0;
     return 0;
 }
 
 // read from rtc
-int32_t rtc_read(int32_t* inode, uint32_t* offset, char* buf, uint32_t len)
+int32_t rtc_read(int32_t fd, void* buf, uint32_t len)
 {
-    *offset = *inode;
-    while(*offset > 0) wait();
+    rtc_interrupted = 0;
+    while(!rtc_interrupted) rtc_interrupted = 0;
     return 0;
 }
 
-int32_t rtc_write(int32_t* inode, uint32_t* offset, const char* buf, uint32_t len)
+int32_t rtc_write(int32_t fd, const void* buf, uint32_t len)
 {
     // check if input is valid
-    if(sizeof(uint32_t) != len) return -1;
-    if(buf == NULL) return -1;
+    if(set_rtc_freq(*(uint8_t*)buf)) return fd;
 
-    // change rtc freq
-    uint32_t freq = *(uint32_t*)buf;
-    *inode = RTC_1024 / freq;
-    return 0;
-}
-
-void wait()
-{
-    asm volatile("hlt");
+    return -1;
 }

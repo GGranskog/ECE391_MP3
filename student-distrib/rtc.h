@@ -34,9 +34,9 @@ extern void rtc_handler();
 
 int32_t set_rtc_freq(int32_t freq);
 int32_t rtc_open(const char* filename);
-int32_t rtc_close(int32_t* inode);
-int32_t rtc_read(int32_t* inode, uint32_t* offset, char* buf, uint32_t len);
-int32_t rtc_write(int32_t* inode, uint32_t* offset, const char* buf, uint32_t len);
+int32_t rtc_close(int32_t fd);
+int32_t rtc_read(int32_t fd, void* buf, uint32_t len);
+int32_t rtc_write(int32_t fd, const void* buf, uint32_t len);
 void wait();
 
 #endif
