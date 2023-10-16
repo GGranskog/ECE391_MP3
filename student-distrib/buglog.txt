@@ -1,0 +1,6 @@
+CHECKPOINT 1:
+
+OS appears to boot, then immediately exits 
+    Fixed by fixing location of gdt_desc_ptr in x86_desc.S
+
+When running test_interrupts() it spews garbage onto the screen
