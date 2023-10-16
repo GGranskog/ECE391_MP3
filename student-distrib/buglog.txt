@@ -25,7 +25,7 @@ Examine the keyboard_handler code for issues that may lead to crashes, such as i
 Ensure that cli and sti are correctly placed to disable and re-enable interrupts around the critical section.
 Bug Log for RTC Handler:
 
-Bug: The RTC (Real-Time Clock) is not generating periodic interrupts.
+Bug: The RTC is not generating periodic interrupts.
 
 Bug Description: The RTC handler does not trigger at regular intervals as expected, impacting timekeeping or time-dependent functionality.
 
