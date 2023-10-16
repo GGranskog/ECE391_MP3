@@ -34,9 +34,10 @@ idt_init()
             idt[i].dpl = 3;
         else
             idt[i].dpl = 0;
-
-        idt[i].present = 0; // will be set to 1 on SET_IDT_ENTRY call
-
+        if (i < 15){
+        idt[i].present = 1; // will be set to 1 on SET_IDT_ENTRY call
+        }
+        else {idt[i].present = 0;}
 
     }
 
