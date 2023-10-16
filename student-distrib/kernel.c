@@ -161,6 +161,7 @@ void entry(unsigned long magic, unsigned long addr) {
     /* Run tests */
     launch_tests();
     test_interrupts();
+    while(1);
 #endif
     /* Execute the first program ("shell") ... */
 
