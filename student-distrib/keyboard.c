@@ -23,5 +23,5 @@ sti();
 }
 
 void keyboard_init(){
-    enable_irq(1)
+    enable_irq(1);
 }
