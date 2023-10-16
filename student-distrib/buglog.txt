@@ -3,4 +3,40 @@ CHECKPOINT 1:
 OS appears to boot, then immediately exits 
     Fixed by fixing location of gdt_desc_ptr in x86_desc.S
 
-When running test_interrupts() it spews garbage onto the screen
+When running test_interrupts() it spews the garbage onto the screen then doesn't change
+
+Bug Log for Keyboard Handler:
+
+Bug: Keyboard input is causing page fault exceptions.
+
+Bug Description: When typing on the keyboard, every time a new key is pressed, there is a page fault.
+
+ Solution:
+
+Properly set present bit for first 15 entries of IDT
+
+Bug: Keyboard typed weird characters
+Fix: use putc instead of printf in keyboard.c
+
+Bug: Exception when pressing multiple keys at the same time
+Fix: 
+
+
+Bug Log for RTC Handler:
+
+Bug: The RTC is not generating periodic interrupts.
+
+Bug Description: The RTC handler does not trigger at regular intervals as expected
+
+
+Bug Log for PIC Functions:
+
+Bug: Some interrupt sources are not being recognized.
+
+Bug Description: The system is not responding to keyboard or RTC test_interrupts
+
+Solution:
+
+Reviewed the PIC initialization code to confirm that interrupt lines are properly mapped to their corresponding IRQs.
+Checked the interrupt controller's mask registers to ensure that they allow the desired interrupts to be recognized.
+
