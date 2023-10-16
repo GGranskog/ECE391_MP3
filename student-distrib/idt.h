@@ -9,4 +9,24 @@
 
 void idt_init();
 
+void div0(void);
+void res(void);
+void nmi(void);
+void bp(void);
+void of(void);
+void br(void);
+void opcode(void);
+void notfound(void);
+void df(void);
+void cso(void);
+void itss(void);
+void snp(void);
+void ssf(void);
+void gp(void);
+void pf(void);
+void fpu(void);
+void alig(void);
+void machine(void);
+void simd(void);
+
 #endif
