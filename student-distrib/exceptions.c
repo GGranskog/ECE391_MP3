@@ -1,3 +1,5 @@
+#include "exceptions.h"
+
 void div0()         {exceptions(0);}
 void res()          {exceptions(1);}
 void nmi()          {exceptions(2);}
