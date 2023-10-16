@@ -28,7 +28,7 @@ idt_init()
         idt[i].size = 1;
         idt[i].seg_selector = KERNEL_CS;
 
-        if(i == VECTOR_SYSTEM_CALL)
+        if(i == VECTOR_SYS_CALL)
             idt[i].dpl = 3;
         else
             idt[i].dpl = 0;
