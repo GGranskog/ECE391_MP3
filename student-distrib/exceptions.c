@@ -15,7 +15,7 @@ void itss()         {exceptions(10);}
 void snp()          {exceptions(11);}
 void ssf()          {exceptions(12);}
 void gp()           {exceptions(13);}
-void pf()           {exceptions(14); while(1);}
+void pf()           {exceptions(14);}
 void fpu()          {exceptions(15);}
 void alig()         {exceptions(16);}
 void machine()      {exceptions(17);}
