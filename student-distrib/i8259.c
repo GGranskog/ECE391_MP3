@@ -78,7 +78,7 @@ void disable_irq(uint32_t irq_num) {
 
     //master disable irq
     if(irq_num < 8){
-        master_mask = inb(MASTER_8259_DATA)
+        master_mask = inb(MASTER_8259_DATA);
         master_mask |= (1 << irq_num); //set bit to 1
 
         outb(master_mask, MASTER_8259_DATA);
