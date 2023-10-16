@@ -28,9 +28,11 @@
 #define RTC_REG_C 0x8C
 
 volatile int rtc_interrupted;
-
+int rate;
 extern void rtc_init();
 extern void rtc_handler();
-
+int32_t rtc_close(int32_t fd);
+int32_t rtc_open(const char* filename);
+int32_t set_rtc_freq(int32_t freq);
 
 #endif

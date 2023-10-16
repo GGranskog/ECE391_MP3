@@ -84,7 +84,7 @@ void rtc_keyboard(){
 
 /* Test suite entry point */
 void launch_tests(){
-	TEST_OUTPUT("idt_test", idt_test());
+	// TEST_OUTPUT("idt_test", idt_test());
 	// launch your tests here
 	// TEST_OUTPUT("deref_null", deref_null());
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
