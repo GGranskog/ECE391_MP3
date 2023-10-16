@@ -75,11 +75,7 @@ gdt_ptr:
     .quad 0x00CFF2000000FFFF
 
     # Set up an entry for TSS
-gdt_desc_ptr:
-    .word gdt_bottom - gdt -1
-    .long gdt
 
-    .align 16
 tss_desc_ptr:
     .quad 0
 
@@ -87,6 +83,12 @@ tss_desc_ptr:
 ldt_desc_ptr:
     .quad 0
 
+gdt_desc_ptr:
+    .word gdt_bottom - gdt - 1
+    .long gdt
+
+    .align 16
+    
 gdt_bottom:
 
     .align 16
