@@ -3,7 +3,7 @@
 
 void rtc_init()
 {
-    cli(); // clear interrupt
+    //cli(); // clear interrupt
     //outb(RTC_REG_A, RTC_SELECT);
     //outb(0x20, 0x71);
 

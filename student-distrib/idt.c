@@ -62,6 +62,6 @@ idt_init()
     SET_IDT_ENTRY(idt[17], alig);
     SET_IDT_ENTRY(idt[18], machine);
     SET_IDT_ENTRY(idt[19], simd);
-    SET_IDT_ENTRY(idt[0x21], keyboard_init); //IDT ENTRY to keyboard is 0x21
-    SET_IDT_ENTRY(idt[0x28], rtc_init);    //IDT ENTRY TO rtc is 0x28
+    SET_IDT_ENTRY(idt[0x21], keyboard_handler); //IDT ENTRY to keyboard is 0x21
+    SET_IDT_ENTRY(idt[0x28], rtc_handler);    //IDT ENTRY TO rtc is 0x28
 }

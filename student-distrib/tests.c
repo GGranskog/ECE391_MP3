@@ -48,26 +48,25 @@ int idt_test(){
 // add more tests here
 int divide_by_zero(){
 	TEST_HEADER;
-	int result = PASS;
-	int i;
-	i = 1/0;
-	if(i) {
-        result;
-    } else {
-        result = FAIL;
-    }
-	return result;
+	int a = 0;
+	int b;
+	b = 1/a;
+	return b;
 }
+
 
 int deref_null(){
 	TEST_HEADER;
-	int* p = NULL;
-	int result;
-	if (p){result = PASS;}
-	else{result = FAIL;}
-	return result;
+	int a = 0;
+	int ptr;
+	ptr = (int)&a;
+	return ptr;
 }
 
+
+int keyboard_test(){
+	return 0;
+}
 
 /*
 void rtc_keyboard(){
