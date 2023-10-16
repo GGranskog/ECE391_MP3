@@ -21,10 +21,6 @@ void rtc_init()
     outb(RTC_REG_C, RTC_SELECT); // write to reg C
     inb(RTC_CMOS);
 
-    rtc_interrupted = 1;
-    sti();                  //interrupt process complete
-    send_eoi(RTC_IRQ);
-
     enable_irq(RTC_IRQ);
     enable_irq(RTC_IRQ2);
 
