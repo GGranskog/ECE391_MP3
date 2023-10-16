@@ -103,6 +103,7 @@ int32_t rtc_close(int32_t* inode)
     return 0;
 }
 
+// read from rtc
 int32_t rtc_read(int32_t* inode, uint32_t* offset, char* buf, uint32_t len)
 {
     *offset = *inode;
