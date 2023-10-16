@@ -86,7 +86,7 @@ void exceptions(int num)
             printf("EXCEPTION: SIMD Floating-Point Exception");
             break;
         default:
-            printf("EXCEPTION: Intel Reserved")
+            printf("EXCEPTION: Intel Reserved");
             break;
     }
 }
