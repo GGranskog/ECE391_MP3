@@ -85,7 +85,8 @@ void disable_irq(uint32_t irq_num) {
     }
 
     //slave disable irq
-    slave_mask = inb(SLAVE_8259_DATA) |= (1 << (irq_num - 8)); //set bit to 1
+    slave_mask = inb(SLAVE_8259_DATA);
+    slave_mask |= (1 << (irq_num - 8)); //set bit to 1
 
     outb(slave_mask, SLAVE_8259_DATA);
 
