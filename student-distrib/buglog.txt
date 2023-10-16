@@ -3,59 +3,39 @@ CHECKPOINT 1:
 OS appears to boot, then immediately exits 
     Fixed by fixing location of gdt_desc_ptr in x86_desc.S
 
-When running test_interrupts() it spews garbage onto the screen
+When running test_interrupts() it spews the garbage onto the screen then doesn't change
 
 Bug Log for Keyboard Handler:
 
-Bug: Keyboard input is not being displayed correctly on the screen.
+Bug: Keyboard input is causing page fault exceptions.
 
-Bug Description: When typing on the keyboard, the displayed characters do not match the keys being pressed.
+Bug Description: When typing on the keyboard, every time a new key is pressed, there is a page fault.
 
  Solution:
 
-Check the keyboard array to ensure that it correctly maps scan codes to characters for the specific keyboard layout in use.
-Verify that the scan code interpretation matches the keyboard layout being used.
-Bug: The system crashes when a key is pressed.
+Checked the keyboard array to ensure that it correctly maps scan codes to characters for the specific keyboard layout in use.
+Verified that the scan code interpretation matches the keyboard layout being used.
 
-Bug Description: Typing on the keyboard leads to system instability or crashes.
 
-Solution:
-
-Examine the keyboard_handler code for issues that may lead to crashes, such as improper memory access or interrupt handling.
-Ensure that cli and sti are correctly placed to disable and re-enable interrupts around the critical section.
 Bug Log for RTC Handler:
 
 Bug: The RTC is not generating periodic interrupts.
 
-Bug Description: The RTC handler does not trigger at regular intervals as expected, impacting timekeeping or time-dependent functionality.
+Bug Description: The RTC handler does not trigger at regular intervals as expected
 
 Solution:
 
-Review the RTC initialization code to ensure that the periodic interrupt generation is properly configured.
-Check the handler's code to verify that it's correctly acknowledging and handling RTC interrupts.
-Bug: Reading the RTC time returns incorrect values.
+Reviewed the RTC initialization code to ensure that the periodic interrupt generation is properly configured.
+Checked the handler's code to verify that it's correctly acknowledging and handling RTC interrupts.
 
-Bug Description: When reading the time from the RTC, the values returned do not match the current time.
-
-Solution:
-
-Inspect the RTC reading code to ensure that it correctly interprets the RTC registers to obtain the current time.
-Verify that the time format (e.g., 12-hour or 24-hour) is correctly considered when reading RTC values.
 Bug Log for PIC Functions:
 
 Bug: Some interrupt sources are not being recognized.
 
-Bug Description: The system is not responding to specific hardware interrupt sources (e.g., devices or peripherals).
+Bug Description: The system is not responding to keyboard or RTC test_interrupts
 
 Solution:
 
-Review the PIC initialization code to confirm that interrupt lines are properly mapped to their corresponding IRQs.
-Check the interrupt controller's mask registers to ensure that they allow the desired interrupts to be recognized.
-Bug: Spurious interrupts are occurring randomly.
+Reviewed the PIC initialization code to confirm that interrupt lines are properly mapped to their corresponding IRQs.
+Checked the interrupt controller's mask registers to ensure that they allow the desired interrupts to be recognized.
 
-Bug Description: The system receives interrupts from unknown sources, causing unexpected behavior.
-
- Solution:
-
-Verify that the PIC is properly configured in cascade mode if needed, especially if using multiple PICs (e.g., the master and slave).
-Ensure that unhandled interrupt requests are being acknowledged and cleared to prevent spurious interrupts.
