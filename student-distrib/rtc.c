@@ -3,7 +3,7 @@
 
 void rtc_init()
 {
-    // cli(); // clear interrupt
+    cli(); // clear interrupt
     outb(RTC_REG_A, RTC_SELECT);
     outb(0x20, 0x71);
 
@@ -23,8 +23,8 @@ void rtc_init()
 
 void rtc_handler()
 {
-    // test_interrupts();
     cli();
+    test_interrupts();
     outb(RTC_REG_C, RTC_SELECT);
     inb(RTC_CMOS);
     rtc_interrupted = 1;
