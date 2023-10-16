@@ -46,20 +46,35 @@ void init_page() {
 
 
     // video memeory
-    page_dir[0] = 0x3;
+    page_dir[0] = ((uint32_t)page_table) | 0x3;;
     // kernel
     page_dir[1] = START_KERNEL | PS | RW | P; //kernel starts @ x400000, size=4KB, Supervisor, RW enabled , present
     //
-    page_dir[2] = page_table[IDX2] | 0x3;
+    page_dir[2] = ((uint32_t)page_table) | 0x3;
     //
-    page_dir[3] = page_table[IDX3] | 0x3;; 
+    page_dir[3] = ((uint32_t)page_table) | 0x3;;
+
+    cr3();
 }
 
-void paging(){
+void cr3(){
+    asm volatile(
+    "mov %%eax, %%cr3             \n\
+    mov %%cr4, %%eax             \n\
+    or  $0x00000010, %%eax       \n\
+    mov %%eax, %%cr4             \n\
+    mov %%cr0, %%eax             \n\
+    or $0x80000001, %%eax        \n\
+    mov %%eax, %%cr0             \n\
+    "
+    :
+    : "a"(page_directory)
+    : "memory"
+    );
 
 }
 
-/* courtesy of https://wiki.osdev.org/Paging */
+/* courtesy of https://wiki.osdev.org/Paging 
 void map_page(void *physaddr, void *virtualaddr, unsigned int flags) {
     // Make sure that both addresses are page-aligned.
  
@@ -80,28 +95,5 @@ void map_page(void *physaddr, void *virtualaddr, unsigned int flags) {
     // Now you need to flush the entry in the TLB
     // or you might not notice the change.
 }
+*/
 
-void cr3(){
-    asm volatile (
-    "mov %eax, page_directory
-    mov %cr3, %eax
-    mov eax, cr0
-    or %eax, $0x80000001
-    mov %cr0, %eax
-    mov %eax, %cr4
-    or %eax, $0x00000010
-    mov cr4, eax
-    ")
-}
-
-void map_user(){
-
-}
-
-void flush_tb(){
-    asm
-}
-
-void new_video(){
-
-}

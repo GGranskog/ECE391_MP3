@@ -9,6 +9,7 @@
 #include "debug.h"
 #include "tests.h"
 #include "idt.h"
+#include "paging.h"
 
 #define RUN_TESTS
 
@@ -141,6 +142,7 @@ void entry(unsigned long magic, unsigned long addr) {
     idt_init();
     i8259_init();
     rtc_init();
+    init_page();
     /* Initialize devices, memory, filesystem, enable device interrupts on the
      * PIC, any other initialization stuff... */
 

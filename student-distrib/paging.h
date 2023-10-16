@@ -28,12 +28,12 @@ uint32_t page_table[PTE] __attribute__((aligned(PDE_SIZE)));
 uint32_t video_mem[PTE] __attribute__((aligned(PDE_SIZE)));
 
 void init_page();
-void paging();
-void map_user();
-void map_page(void *physaddr, void *virtualaddr, unsigned int flags)
-void flush_tb();
-extern void cr3();
-extern void new_video();
+//void paging();
+//void map_user();
+//void map_page(void *physaddr, void *virtualaddr, unsigned int flags)
+//void flush_tb();
+//extern void cr3();
+//extern void new_video();
 
 #endif /* ASM */
 
