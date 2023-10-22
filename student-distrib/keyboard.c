@@ -1,7 +1,6 @@
 #include "keyboard.h"
 #include "i8259.h"
 #include "lib.h"
-#include "terminal.h"
 
 /* keyboard irq number */
 #define KEYBOARD_IRQ_NUM    1
@@ -113,6 +112,7 @@ extern void keyboard_handler(void) {
         if(scan_to_ascii[scan_code][0] == '\n'){
             num_char = 0;
             putc(scan_to_ascii[scan_code][0]);
+            get_char(scan_to_ascii[scan_code][0]);
         //Ctrl-l for clearing the screen
         } else if((ctrl_flag > 0) && (scan_to_ascii[scan_code][0] == 'l')){
             clear();
@@ -120,6 +120,7 @@ extern void keyboard_handler(void) {
         } else if(scan_to_ascii[scan_code][0] == BCKSPACE){
             if(num_char > 0){
                 putc(scan_to_ascii[scan_code][0]);
+                get_char(scan_to_ascii[scan_code][0]);
                 --num_char;
             }
         //Outputs the shifted versions of the keys pressed.
@@ -130,11 +131,13 @@ extern void keyboard_handler(void) {
                ((scan_code >= A_UP_LIMIT) && (scan_code <= L_LOW_LIMIT)) ||
                ((scan_code >= Z_UP_LIMIT) && (scan_code <= M_LOW_LIMIT))) ){
                 putc(scan_to_ascii[scan_code][0]);
+                get_char(scan_to_ascii[scan_code][0]);
                 ++num_char;
             }
             //Otherwise the shifted versions are outputted
             else{
                 putc(scan_to_ascii[scan_code][1]);
+                get_char(scan_to_ascii[scan_code][1]);
                 ++num_char;
             }
         //Prints out the captialized version if necessary to the screen
@@ -143,15 +146,18 @@ extern void keyboard_handler(void) {
                ((scan_code >= A_UP_LIMIT) && (scan_code <= L_LOW_LIMIT)) ||
                ((scan_code >= Z_UP_LIMIT) && (scan_code <= M_LOW_LIMIT))){
                 putc(scan_to_ascii[scan_code][1]);
+                get_char(scan_to_ascii[scan_code][1]);
                 ++num_char;
             }
             //If it is not a letter it is printed as is.
             else{
                 putc(scan_to_ascii[scan_code][0]);
+                get_char(scan_to_ascii[scan_code][0]);
                 ++num_char;
             }
         } else if(num_char < BUFFER_MAX){
             putc(scan_to_ascii[scan_code][0]);
+            get_char(scan_to_ascii[scan_code][0]);
             ++num_char;
         }
     }
@@ -196,5 +202,38 @@ uint8_t check_for_modifier(uint8_t scan_code) {
         return 1;
     default:
         return 0;
+    }
+}
+
+/* void get_char(char new_char);
+ * Puts the most recently entered keyboard character into the char_buffer
+ * for terminal_read and updates if enter has been pressed.
+ *
+ * Inputs: new_char - The character entered by the keyboard
+ * Return Value: none
+ * Side effects: char_buffer, char_count, and enter_flag are changed */
+void get_char(char new_char) {
+    //End the buffer with the newline and enable the enter_flag.
+    if(new_char == '\n') {
+        enter_flag = 1;
+        if(char_count >= BUFFER_SIZE)
+            char_buffer[BUFFER_SIZE - 1] = '\n';
+        else
+            char_buffer[char_count] = '\n';
+    //Clear one space of the buffer.
+    } else if(new_char == BCKSPACE) {
+        if(char_count > 0){
+            if(char_count <= BUFFER_SIZE)
+                char_buffer[char_count - 1] = ' ';
+            --char_count;
+        }
+    //Add a new character to the buffer.
+    } else if(char_count < (BUFFER_SIZE - 1)){
+        char_buffer[char_count] = new_char;
+        ++char_count;
+    }
+    //Keep track of the available number of backspaces that can be used.
+    else{
+        ++char_count;
     }
 }
