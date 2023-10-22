@@ -30,11 +30,20 @@
 #define Z_UP_LIMIT          (0x2C)
 #define M_LOW_LIMIT         (0x32)
 
+#define BUFFER_SIZE   128
+
+
 // Flags for modifier keys
 uint8_t l_shift_flag  = 0;
 uint8_t r_shift_flag  = 0;
 uint8_t ctrl_flag   = 0;    //Can be up to two (for the right and left)
 uint8_t caps_flag   = 0;
+
+
+volatile static int enter_flag = 0;
+static int char_count = 0;
+static char char_buffer[BUFFER_SIZE];
+
 
 // Count to keep track of the available number of backspaces
 int num_char    = 0;
