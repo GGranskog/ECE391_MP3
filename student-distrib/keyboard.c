@@ -113,7 +113,6 @@ extern void keyboard_handler(void) {
         if(scan_to_ascii[scan_code][0] == '\n'){
             num_char = 0;
             putc(scan_to_ascii[scan_code][0]);
-            get_char(scan_to_ascii[scan_code][0]);
         //Ctrl-l for clearing the screen
         } else if((ctrl_flag > 0) && (scan_to_ascii[scan_code][0] == 'l')){
             clear();
@@ -121,7 +120,6 @@ extern void keyboard_handler(void) {
         } else if(scan_to_ascii[scan_code][0] == BCKSPACE){
             if(num_char > 0){
                 putc(scan_to_ascii[scan_code][0]);
-                get_char(scan_to_ascii[scan_code][0]);
                 --num_char;
             }
         //Outputs the shifted versions of the keys pressed.
@@ -132,13 +130,11 @@ extern void keyboard_handler(void) {
                ((scan_code >= A_UP_LIMIT) && (scan_code <= L_LOW_LIMIT)) ||
                ((scan_code >= Z_UP_LIMIT) && (scan_code <= M_LOW_LIMIT))) ){
                 putc(scan_to_ascii[scan_code][0]);
-                get_char(scan_to_ascii[scan_code][0]);
                 ++num_char;
             }
             //Otherwise the shifted versions are outputted
             else{
                 putc(scan_to_ascii[scan_code][1]);
-                get_char(scan_to_ascii[scan_code][1]);
                 ++num_char;
             }
         //Prints out the captialized version if necessary to the screen
@@ -147,18 +143,15 @@ extern void keyboard_handler(void) {
                ((scan_code >= A_UP_LIMIT) && (scan_code <= L_LOW_LIMIT)) ||
                ((scan_code >= Z_UP_LIMIT) && (scan_code <= M_LOW_LIMIT))){
                 putc(scan_to_ascii[scan_code][1]);
-                get_char(scan_to_ascii[scan_code][1]);
                 ++num_char;
             }
             //If it is not a letter it is printed as is.
             else{
                 putc(scan_to_ascii[scan_code][0]);
-                get_char(scan_to_ascii[scan_code][0]);
                 ++num_char;
             }
         } else if(num_char < BUFFER_MAX){
             putc(scan_to_ascii[scan_code][0]);
-            get_char(scan_to_ascii[scan_code][0]);
             ++num_char;
         }
     }
