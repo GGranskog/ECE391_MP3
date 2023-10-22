@@ -22,20 +22,23 @@ idt_init()
         idt[i].reserved2 = 1;
 
         if(i >= VECTOR_INTERRUPT_START && i <= VECTOR_INTERRUPT_END)
-            idt[i].reserved3 = 0;
-        else
             idt[i].reserved3 = 1;
+        else
+            idt[i].reserved3 = 0;
 
         idt[i].reserved4 = 0;
         idt[i].size = 1;
         idt[i].seg_selector = KERNEL_CS;
 
-        if(i == VECTOR_SYS_CALL)
+        if(i == VECTOR_SYS_CALL){
+            idt[i].present = 1;
             idt[i].dpl = 3;
+        }
         else
             idt[i].dpl = 0;
         if (i < 15){
         idt[i].present = 1; // will be set to 1 on SET_IDT_ENTRY call
+        idt[i].reserved3 = 1;
         }
         else {idt[i].present = 0;}
 
@@ -63,6 +66,8 @@ idt_init()
     SET_IDT_ENTRY(idt[17], alig);
     SET_IDT_ENTRY(idt[18], machine);
     SET_IDT_ENTRY(idt[19], simd);
+    idt[0x21].present = 1;
+    idt[0x28].present = 1;
     SET_IDT_ENTRY(idt[0x21], keyboard_handler); //IDT ENTRY to keyboard is 0x21
     SET_IDT_ENTRY(idt[0x28], rtc_handler);    //IDT ENTRY TO rtc is 0x28
 }

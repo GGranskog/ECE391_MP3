@@ -18,5 +18,7 @@ void keyboard_init(void);
 /* reads input from keyboard dataport when an interrupt occurs and put it to video memory */
 extern void keyboard_handler(void);
 
+void get_char(char new_char);
+
 #endif /* KEYBOARD_H */
 
