@@ -59,14 +59,16 @@ Analyzed the keyboard driver code and identified that the Shift key modifier is 
 Implemented code to correctly interpret the Shift key events and change the case of alphanumeric characters accordingly.
 After fixing this issue, the Shift key modifies the character case as expected.
 
-Bug 2: Real-Time Clock Offset
-
-Symptoms:
-
-The real-time clock (RTC) is not keeping time accurately, and there is a noticeable offset.
-
-
+Bug 2:
 The RTC driver functions generate garbage numbers when testing.
 Solution:
 ????
+
+Bug 3: file system not reading
+
+Symptoms:
+
+when trying to read the file system and compare names a page fault would be thrown
+Solution had a null check and length check for nema of the files when comapring
+
 
