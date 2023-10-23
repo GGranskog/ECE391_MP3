@@ -125,30 +125,53 @@ void rtc_keyboard(){
  * Coverage: terminal_read and write, handle buffer overflow
  * Files: terminal.c, keyboard.c
  */
-void test_terminal_read_write(){
-	char buf[BUF_SIZE];
-	int read_num = 0;
-	int write_num = 0;
-	//int32_t fd = NULL;
+// void test_terminal_read_write(){
+// 	char buf[BUF_SIZE];
+// 	int read_num = 0;
+// 	int write_num = 0;
+// 	//int32_t fd = NULL;
 	
-	/*Test for terminal read and write*/
-	TEST_HEADER;
-	while (1)
-	{
-		printf("What's your name?(press 'q' to exist) ");
-		/*read in the user input to a buffer*/
-		read_num = terminal_read(0,  buf, BUF_SIZE);		
-		/*Press q to quit*/		
-		if (!strncmp("q",buf,BUF_SIZE)){
-			break;
-		}
-		printf("Hello,");
-		/*write out the buffer value to the screen*/
-		write_num = terminal_write(0,buf,BUF_SIZE);
-		/*compare the read in bytes and write out bytes*/
-		printf("\nread in bytes: %d\nwrite out bytes: %d\n",read_num, write_num);
-	}
-	clear();
+// 	/*Test for terminal read and write*/
+// 	TEST_HEADER;
+// 	while (1)
+// 	{
+// 		printf("What's your name?(press 'q' to exist) ");
+// 		/*read in the user input to a buffer*/
+// 		read_num = terminal_read(0,  buf, BUF_SIZE);		
+// 		/*Press q to quit*/		
+// 		if (!strncmp("q",buf,BUF_SIZE)){
+// 			break;
+// 		}
+// 		printf("Hello,");
+// 		/*write out the buffer value to the screen*/
+// 		write_num = terminal_write(0,buf,BUF_SIZE);
+// 		/*compare the read in bytes and write out bytes*/
+// 		printf("\nread in bytes: %d\nwrite out bytes: %d\n",read_num, write_num);
+// 	}
+// 	clear();
+// }
+int term_driver_test(){
+    TEST_HEADER;
+    //int result = PASS;
+    int nbytes;
+    char buf[1024];
+    while(1){
+        //Testing a buffer smaller than 128.
+        terminal_write(0, (uint8_t*)"TESTING size 10\n", 16);
+        nbytes = terminal_read(0, buf, 10);
+        terminal_write(0, buf, nbytes);
+
+        //Testing a buffer at the max buffer size
+        terminal_write(0, (uint8_t*)"TESTING size 128\n", 17);
+        nbytes = terminal_read(0, buf, 128);
+        terminal_write(0, buf, nbytes);
+
+        //Testing a buffer greater than the max buffer size
+        terminal_write(0, (uint8_t*)"TESTING size 129\n", 17);
+        nbytes = terminal_read(0, buf, 150);
+        terminal_write(0, buf, nbytes);
+    }
+    return PASS;
 }
 
 /* dir_read
