@@ -91,31 +91,7 @@ void rtc_keyboard(){
  * Coverage: terminal_read and write, handle buffer overflow
  * Files: terminal.c, keyboard.c
  */
-// void test_terminal_read_write(){
-// 	char buf[BUF_SIZE];
-// 	int read_num = 0;
-// 	int write_num = 0;
-// 	//int32_t fd = NULL;
-	
-// 	/*Test for terminal read and write*/
-// 	TEST_HEADER;
-// 	while (1)
-// 	{
-// 		printf("What's your name?(press 'q' to exist) ");
-// 		/*read in the user input to a buffer*/
-// 		read_num = terminal_read(0,  buf, BUF_SIZE);		
-// 		/*Press q to quit*/		
-// 		if (!strncmp("q",buf,BUF_SIZE)){
-// 			break;
-// 		}
-// 		printf("Hello,");
-// 		/*write out the buffer value to the screen*/
-// 		write_num = terminal_write(0,buf,BUF_SIZE);
-// 		/*compare the read in bytes and write out bytes*/
-// 		printf("\nread in bytes: %d\nwrite out bytes: %d\n",read_num, write_num);
-// 	}
-// 	clear();
-// }
+
 int terminal_test(){
     TEST_HEADER;
     //int result = PASS;
