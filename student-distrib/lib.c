@@ -8,6 +8,9 @@
 #define NUM_ROWS    25
 #define ATTRIB      0x7
 
+#define BCKSPACE            (0x08)
+
+
 static int screen_x;
 static int screen_y;
 static char* video_mem = (char *)VIDEO;
