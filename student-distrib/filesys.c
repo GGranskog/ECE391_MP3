@@ -2,7 +2,7 @@
 
 
     inode_t* inode;
-    dentry_t dentry;
+    dentry_t d_ent;
     boot_t* boot_block;
     int dentry_index; 
     uint32_t data_block;
@@ -16,7 +16,8 @@
 void init_file_sys(uint32_t file_sys){
     boot_block = (boot_t*)file_sys;
     inode = (inode_t*)(boot_block + BLOCK_SIZE);
-    data_block = (boot_block->inode_count+1)*BLOCK_SIZE + file_sys;
+    d_ent - boot_block->direntries;
+    data_block = (boot_block->inode_count + 1)*BLOCK_SIZE + file_sys;
 }
 
 /*
