@@ -259,5 +259,5 @@ void launch_tests(){
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
 	// 
 
-	test_terminal_read_write();  
+	term_driver_test();  
 }
