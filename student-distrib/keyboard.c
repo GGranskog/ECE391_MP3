@@ -181,31 +181,31 @@ extern void keyboard_handler(void) {
  * Inputs: scan_code - Index of scan code sent from keyboard
  * Return Value: 1 if modifier found, 0 otherwise
  * Function: Check if scan_code is a modifier key and update global flags */
-bool check_for_modifier(uint8_t scan_code) {
+int check_for_modifier(uint8_t scan_code) {
     switch(scan_code) {
         case LEFT_SHIFT_PRESS:
             l_shift_flag = 1;
-            return true;
+            return 1;
         case LEFT_SHIFT_RELEASE:
             l_shift_flag = 0;
-            return true;
+            return 1;
         case RIGHT_SHIFT_PRESS:
             r_shift_flag = 1;
-            return true;
+            return 1;
         case RIGHT_SHIFT_RELEASE:
             r_shift_flag = 0;
-            return true;
+            return 1;
         case CTRL_PRESS:
             ctrl_flag += 1;
-            return true;
+            return 1;
         case CTRL_RELEASE:
             ctrl_flag -= 1;
-            return true;
+            return 1;
         case CAPS_PRESS:
             caps_flag = !caps_flag;
-            return true;
+            return 1;
         default:
-            return false;
+            return 0;
     }
 }
 
