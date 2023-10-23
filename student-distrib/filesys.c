@@ -147,31 +147,31 @@ int32_t dir_close (int32_t fd){
  */
 int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
 
-    if (dentry_index == -1){
+    if (dentry_index == -1){                //if index is -1 then file is not open
 
         return -1;
 
     }
 
-    if (buf == NULL){
+    if (buf == NULL){                       
 
         return -1;
 
     }
 
-    if (dentry_index >= boot_block->dir_count){
+    if (dentry_index >= boot_block->dir_count){         // if at the end of the array
 
         return 0;
 
     }
-    int dir_length;
-    char* file_name;
+    int dir_length;                         //length of the file
+    char* file_name;                        //file name
 
-    char buf_string[STR_LEN];
-    int idx, i;
+    char buf_string[STR_LEN];               
+    int idx, i;                             //index loops
 
     if (dir_length < length){
-        dir_length = STR_LEN;
+        dir_length = STR_LEN;           //  make sure within bounds 
     }
     else{
 
@@ -179,15 +179,15 @@ int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
 
     }
 
-    file_name = boot_block->direntries[dentry_index++].fname;
+    file_name = boot_block->direntries[dentry_index++].fname;           // file name in dentry
 
     for(idx = 0; i < dir_length; idx++){
 
-        buf_string[i] = file_name[i];
+        buf_string[i] = file_name[i];                       //copying into the string bufer
 
     }
 
-    strncpy((int8_t*) buf, (int8_t*)buf_string, dir_length);
+    strncpy((int8_t*) buf, (int8_t*)buf_string, dir_length);            
 
     return dir_length;
 
@@ -219,11 +219,11 @@ int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
  */
 int32_t file_open (const char* file_name){
 
-    dentry_t dentry;
-    uint32_t rdbi = read_dentry_by_name((uint8_t*) file_name, &dentry);
-    if (rdbi != 0){
+    dentry_t dentry;            //temp dentry
+    uint32_t rdbi = read_dentry_by_name((uint8_t*) file_name, &dentry);    //call read dentry by name
+    if (rdbi != 0){                 // if not 0 that means no file
 
-        return -1;
+        return -1;          
 
     }
     else if (dentry.ftype != 2){            // 2 is the file type
@@ -231,7 +231,7 @@ int32_t file_open (const char* file_name){
         return -1;
 
     }
-    else if (dentry.inode_num >= boot_block->inode_count){
+    else if (dentry.inode_num >= boot_block->inode_count){          
 
         return -1;
 
@@ -272,7 +272,7 @@ int32_t file_read (int32_t inode_count, uint32_t offset, uint8_t* buf, uint32_t 
         return -1;
 
     }
-    return read_data(inode_count, offset, buf, length);
+    return read_data(inode_count, offset, buf, length);         
 
 }
 
