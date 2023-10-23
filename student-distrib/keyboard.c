@@ -50,7 +50,7 @@ static char char_buffer[BUFFER_SIZE];
 int num_char    = 0;
 
 // Check for modifiers and return 1 if a modifier was pressed
-uint8_t check_for_modifier(uint8_t scan_code);
+int check_for_modifier(uint8_t scan_code);
 
 /*
 * Store every key on the keyboard and its alternate function in a lookup table
