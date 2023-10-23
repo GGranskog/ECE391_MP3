@@ -46,6 +46,8 @@ int idt_test(){
 }
 
 // add more tests here
+
+// test to see how our OS handles a divide by zero erorr
 int divide_by_zero(){
 	TEST_HEADER;
 	int a = 0;
@@ -54,7 +56,7 @@ int divide_by_zero(){
 	return b;
 }
 
-
+// test to see how our OS handles a derenfrencing null erorr
 int deref_null(){
 	TEST_HEADER;
 	int a = 0;
@@ -63,7 +65,7 @@ int deref_null(){
 	return ptr;
 }
 
-
+// test to see if our OS sets up paging correctly
 int paging_mr_herman(){
 	return 0;
 }
