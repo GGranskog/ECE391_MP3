@@ -1,11 +1,16 @@
 #include "filesys.h"
 
 
+    inode_t node;
+    dentry_t dentry;
+    boot_t boot;
 /*
  *  initialize file system
  *  Input:  fname - name of the file, dentry - 
  *  Output: none
  */
+
+
 void init_file_sys(uint32_t file_sys){
 
 }
@@ -18,7 +23,7 @@ void init_file_sys(uint32_t file_sys){
 int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
     uint32_t i;
     uint32_t rdbi = read_dentry_by_index(i, dentry);
-    return rdbi;
+    return -1;
 }
 
 /*
@@ -38,8 +43,9 @@ int32_t read_dentry_by_index (uint32_t index, dentry_t* dentry){
  *          0 means all bytes were read and EOF was reached, -1 means failure
  */
 int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t length){
-    int i;
+    uint32_t i, idx, byte=0;
     for (i = 0; i < length; i++){
+        idx = i + offset;
 
     }
     return -1;
@@ -57,7 +63,8 @@ int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t lengt
  */
 int32_t dir_open (const char* file_name){
 
-    return -1;
+
+
 }
 
 
@@ -72,6 +79,7 @@ int32_t dir_open (const char* file_name){
 int32_t dir_close (int32_t fd){
 
     return 0;
+
 }
 
 
@@ -87,7 +95,8 @@ int32_t dir_close (int32_t fd){
  */
 int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
 
-    return -1;
+
+
 }
 
 
@@ -102,6 +111,7 @@ int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
 int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
 
     return -1;
+
 }
 
 
@@ -115,7 +125,8 @@ int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
  */
 int32_t file_open (const char* file_name){
 
-    return -1;
+
+
 }
 
 
@@ -130,6 +141,7 @@ int32_t file_open (const char* file_name){
 int32_t file_close (int32_t fd){
 
     return 0;
+
 }
 
 
@@ -144,7 +156,8 @@ int32_t file_close (int32_t fd){
  */
 int32_t file_read (int32_t fd, uint8_t* buf, uint32_t length){
 
-    return -1;
+
+
 }
 
 
@@ -159,6 +172,7 @@ int32_t file_read (int32_t fd, uint8_t* buf, uint32_t length){
 int32_t file_write (int32_t fd, uint8_t* buf, uint32_t length){
 
     return -1;
+
 }
 
 
