@@ -25,6 +25,11 @@
 #define M_LOW_LIMIT         (0x32)
 #define BUFFER_SIZE         128
 
+
+#define SUCCESS 0
+#define FAIL    -1
+
+
 /* Global Flags */
 uint8_t l_shift_flag  = 0;
 uint8_t r_shift_flag  = 0;
