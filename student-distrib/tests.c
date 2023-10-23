@@ -163,7 +163,7 @@ void directory_read(){
 	clear();
 	uint8_t buf[4096];
 	int i;
-	int file_count = 0;;
+	//int file_count = 0;;
 
 	for (i = 0; i < 63; i++){
 

@@ -1,8 +1,8 @@
 #include "filesys.h"
 
 
-    inode_t* inode;
-    dentry_t d_ent;
+    inode_t* node;
+    //dentry_t* d_ent;
     boot_t* boot_block;
     int dentry_index; 
     uint32_t data_block;
@@ -15,8 +15,7 @@
 
 void init_file_sys(uint32_t file_sys){
     boot_block = (boot_t*)file_sys;
-    inode = (inode_t*)(boot_block + BLOCK_SIZE);
-    // d_ent - boot_block->direntries;
+    node = (inode_t*)(boot_block + BLOCK_SIZE);
     data_block = (boot_block->inode_count + 1)*BLOCK_SIZE + file_sys;
 }
 
@@ -47,12 +46,12 @@ int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
  *  Output: retuns 0 if success, else -1 on failure
  */
 int32_t read_dentry_by_index (uint32_t index, dentry_t* dentry){
+    if (index >= boot_block->dir_count){return -1;}
 
-    strncpy(dentry->fname, boot_block->direntries[index].fname, STR_LEN);
+    strncpy((int8_t*)dentry->fname, boot_block->direntries[index].fname, STR_LEN);
     dentry->ftype = boot_block->direntries[index].ftype;
     dentry->inode_num = boot_block->direntries[index].inode_num;
-    
-    return -1;
+    return 0;
 }
 
 /*
@@ -63,12 +62,33 @@ int32_t read_dentry_by_index (uint32_t index, dentry_t* dentry){
  *          0 means all bytes were read and EOF was reached, -1 means failure
  */
 int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t length){
-    uint32_t i, idx;
-    // byte=0;
-    for (i = 0; i < length; i++){
-        idx = i + offset;
+    uint32_t i, data_start, data_idx;
+    uint8_t* copy_idx;
+
+    data_start = offset / BLOCK_SIZE;
+    data_idx = offset % BLOCK_SIZE;
+
+    if (node[inode].data_block_num[data_start] >= boot_block->data_count || inode >= boot_block->inode_count){return -1;}
+
+    copy_idx = (uint8_t*)(data_block + (node[inode].data_block_num[data_start])*BLOCK_SIZE + data_idx);
+
+    for (i=0; i<length;i++){
+        if (data_idx > BLOCK_SIZE){
+            data_idx = 0;
+            data_start += 1;
+
+            if (node[inode].data_block_num[data_start] >= boot_block->data_count){return -1;}
+        
+            copy_idx = (uint8_t*)(data_block + node[inode].data_block_num[data_start]*BLOCK_SIZE);
+        }
+        if (node[inode].length <= (i + offset)){return i;}
+
+        buf[i] = *copy_idx;
+        copy_idx++;
+        data_idx++;
     }
-    return -1;
+
+    return i;
 }
 
 
