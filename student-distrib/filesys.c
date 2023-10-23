@@ -223,7 +223,7 @@ int32_t file_read (int32_t inode_count, uint32_t offset, uint8_t* buf, uint32_t 
         return -1
 
     }
-    return read_data(inode_count, offset, buf, length);
+    return read_data(inode_count, offset, (uint8_t*) buf, length);
 
 }
 

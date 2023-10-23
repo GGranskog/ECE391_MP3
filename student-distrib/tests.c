@@ -3,6 +3,7 @@
 #include "lib.h"
 #include "rtc.h"
 #include "keyboard.h"
+#include "file_sys.h"
 
 #define PASS 1
 #define FAIL 0
@@ -149,6 +150,67 @@ void test_terminal_read_write(){
 	}
 	clear();
 }
+
+/* dir_read
+ * Inputs: None
+ * Outputs: Print all known files by index
+ * Side Effects: None
+ * Coverage: 
+ * Files: file_sys.c, file_sys.h
+ */
+void dir_read(){
+
+	clear();
+	uint8_t buf[4096];
+	int i;
+	int file_count = 0;;
+
+	for (i = 0; i < 63; i++){
+
+		dir_read(0, buf, i);
+
+	}
+
+	return PASS;
+
+
+}
+
+/* frame1_read_test
+ * Inputs: None
+ * Outputs: Print all known files by index
+ * Side Effects: None
+ * Coverage: 
+ * Files: file_sys.c, file_sys.h
+ */
+
+void frame1_read_test(){
+
+	clear();
+	uint8_t buf[174];  //buf made to support frame1 file
+	int i; 
+	dentry_t file;
+	int rdbn = read_dentry_by_name((uint8_t*)("frame1.txt"), &file);
+
+	if (rdbn == -1){
+
+		printf("No file called frame1 in the system");
+
+	}
+
+	read_data(file.inode_num, 0, (uint8_t*) buf, 4096 );
+	clear();
+
+	for(i = 0; i < 174; i++){
+		putc(buf[i]);
+
+	}
+
+	return PASS;
+}
+
+
+
 
 
 
