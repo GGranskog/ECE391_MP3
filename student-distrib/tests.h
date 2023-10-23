@@ -14,7 +14,7 @@ void rtc_freq_test();
 // void rtc_keyboard();
 void frame1_read_test();
 void directory_read();
-int term_driver_test();
+int terminal_test();
 //test_terminal_read_write()
 
 #endif /* TESTS_H */

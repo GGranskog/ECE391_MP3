@@ -116,7 +116,7 @@ void rtc_keyboard(){
 // 	}
 // 	clear();
 // }
-int term_driver_test(){
+int terminal_test(){
     TEST_HEADER;
     //int result = PASS;
     int nbytes;
