@@ -332,8 +332,8 @@ int32_t terminal_write(int32_t fd, const void* input_buf, int32_t nbytes) {
     int32_t count = 0;  // Count the number of characters written to the screen
 
     // Write characters onto the screen
-    int i = 0;
-    for (i; i < nbytes; i++) {
+    int i;
+    for (i=0; i < nbytes; i++) {
         putc(buf[i]);
         count++;
     }
