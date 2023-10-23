@@ -175,24 +175,30 @@ void frame1_read_test(){
 }
 
 
-
+/*
+ *	void rtc_test()
+ *	DESCRIPTION: tests driver functions for rtc
+ *	INPUTS: none
+ * 	OUTPUTS: none
+ *	SIDE EFFECTS: changes rtc freq
+ */
 void rtc_test()
 {
 	int i;
 	int j;
-	for (int i = 2; i <= 1024; i *= 2)
+	for (i = 2; i <= 1024; i *= 2)
 	{
 		rtc_write(i, 0, 0);
-		for (int j = 0; j < 2; j++)
+		for (j = 0; j < 2; j++)
 		{
 			rtc_read(0, 0, 0);
 			printf("1");
 		}
 	}
 	rtc_open(0);
-	for (int i = 0; i < 5; i++)
+	for (i = 0; i < 5; i++)
 	{
-		rtc_read(0, 0, 0)
+		rtc_read(0, 0, 0);
 	}
 }
 
@@ -219,5 +225,5 @@ void launch_tests(){
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
 	// 
 
-	term_driver_test();  
+	terminal_test();  
 }
