@@ -23,6 +23,7 @@ void init_file_sys(uint32_t file_sys){
 int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
     uint32_t i;
     uint32_t rdbi = read_dentry_by_index(i, dentry);
+    if (rdbi > 1){return 0;}
     return -1;
 }
 
@@ -46,7 +47,7 @@ int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t lengt
     uint32_t i, idx, byte=0;
     for (i = 0; i < length; i++){
         idx = i + offset;
-
+        idx += byte;
     }
     return -1;
 }
@@ -63,7 +64,7 @@ int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t lengt
  */
 int32_t dir_open (const char* file_name){
 
-
+    return -1;
 
 }
 
@@ -95,7 +96,7 @@ int32_t dir_close (int32_t fd){
  */
 int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
 
-
+    return -1;
 
 }
 
@@ -125,7 +126,7 @@ int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
  */
 int32_t file_open (const char* file_name){
 
-
+    return -1;
 
 }
 
@@ -156,7 +157,7 @@ int32_t file_close (int32_t fd){
  */
 int32_t file_read (int32_t fd, uint8_t* buf, uint32_t length){
 
-
+    return -1;
 
 }
 
