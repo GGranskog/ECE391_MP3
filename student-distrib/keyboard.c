@@ -135,7 +135,6 @@ extern void keyboard_handler(void) {
         outb((uint8_t)((position >> 8) & 0xFF), 0x3D5);
     } else if (scan_to_ascii[scan_code][0] == BCKSPACE) {
         if (num_char > 0) {
-            putc(scan_to_ascii[scan_code][0]);
             get_char(scan_to_ascii[scan_code][0]);
             --num_char;
         }
