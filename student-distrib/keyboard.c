@@ -1,7 +1,6 @@
 #include "keyboard.h"
 #include "i8259.h"
 #include "lib.h"
-#include <stdbool.h>
 
 
 /* keyboard irq number */
