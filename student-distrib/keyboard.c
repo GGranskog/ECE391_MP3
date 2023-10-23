@@ -125,6 +125,15 @@ extern void keyboard_handler(void) {
         //Ctrl-l for clearing the screen
         } else if((ctrl_flag > 0) && (scan_to_ascii[scan_code][0] == 'l')){
             clear();
+
+            uint16_t position;
+            position = screen_y * NUM_COLS + screen_x;
+
+            outb(0x0F, 0x3D4);
+            outb((uint8_t)(position & 0xFF), 0x3D5);
+            outb(0x0E,0x3D4);
+            outb((uint8_t)((position >> 8) & 0xFF), 0x3D5);
+            
         //Deterimes if there are still enough characters for a backspace.
         } else if(scan_to_ascii[scan_code][0] == BCKSPACE){
             if(num_char > 0){
@@ -245,4 +254,73 @@ void get_char(char new_char) {
     else{
         ++char_count;
     }
+}
+
+
+/* int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes);
+ * Reads in keyboard presses and stores it in the char_buffer
+ * until the newline is entered. It then stores the resulting char_buffer
+ * in the buf array entered by the user.
+ *
+ * Inputs: fd - The file descriptor value.
+ *        buf - The array that terminal read will be storing the entered
+ *              keyboard text to.
+ *     nbytes - The maximum number of characters that can be entered in buf.
+ * Return Value: The number of bytes (characters) written to the buf array.
+ * Side effects: char_buffer, char_count, and enter_flag are changed */
+int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
+    int bytes_read = 0;
+    int i;
+
+    //Fills in the buffer as the keyboard interrupts. Exits after newline.
+    while(enter_flag == 0){}
+
+    cli();
+    //The max size of the buffer returned ranges from 1 to 128.
+    if(nbytes < BUFFER_SIZE) {
+        for(i = 0; i < nbytes; ++i) {
+            //Fills in the user entered buffer with the resulting characters.
+            ((char*) buf)[i] = char_buffer[i];
+            char_buffer[i] = ' ';                   //Clears char_buffer
+            //If it is smaller than nbytes it finishes here.
+            if(((char*)buf)[i] == '\n') {
+                bytes_read = i + 1;
+                break;
+            }
+            //Makes sure that the last character in buf is a newline
+            if((i == (nbytes - 1)) && (((char*)buf)[i] != '\n')){
+                ((char*) buf)[i] = '\n';
+                bytes_read = i + 1;
+                break;
+            }
+        }
+    } else {
+        for(i = 0; i < BUFFER_SIZE; ++i) {
+            //Fill in the user entered buffer
+            ((char*) buf)[i] = char_buffer[i];
+            char_buffer[i] = ' ';               //Clear char_buffer
+            if(((char*)buf)[i] == '\n') {
+                bytes_read = i + 1;
+                break;
+            }
+        }
+    }
+    char_count = 0;  //Go back to the start of the char_buffer.
+    enter_flag = 0;
+    sti();
+
+    return bytes_read;
+}
+
+
+int32_t terminal_write(int32_t fd, const void* buf, int32_t nbytes){
+    int i;
+    char curr_char;
+    for(i = 0; i < nbytes; ++i) {
+        //Prints the given characters to the screen.
+        curr_char = ((char*) buf)[i];
+        if(curr_char != '\0')           //Skips printing out the null terminator
+            putc(curr_char);
+    }
+    return nbytes;
 }
