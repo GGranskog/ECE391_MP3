@@ -129,7 +129,7 @@ void test_terminal_read_write(){
 	char buf[BUF_SIZE];
 	int read_num = 0;
 	int write_num = 0;
-	int32_t fd = NULL;
+	//int32_t fd = NULL;
 	
 	/*Test for terminal read and write*/
 	TEST_HEADER;
@@ -137,7 +137,7 @@ void test_terminal_read_write(){
 	{
 		printf("What's your name?(press 'q' to exist) ");
 		/*read in the user input to a buffer*/
-		read_num = terminal_read(fd,0,  buf, BUF_SIZE);		
+		read_num = terminal_read(0,  buf, BUF_SIZE);		
 		/*Press q to quit*/		
 		if (!strncmp("q",buf,BUF_SIZE)){
 			break;

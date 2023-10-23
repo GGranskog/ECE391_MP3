@@ -259,13 +259,50 @@ TERMINAL DRIVER READ/WRITE
  *  OUTPUTS: fill n Bytes in the buf
  *  RETURN VALUE: ret -- number of bytes read
  */
-int32_t terminal_read(int32_t fd, uint32_t offset, void* buf, int32_t nbytes){
-    if (buf==NULL){return FAIL;}
-    if (nbytes < 0){return FAIL;}
-    int32_t ret = keyboard_read(fd, offset, buf, nbytes);
-    return ret;
+int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
+    int bytes_read = 0;
+    int i;
 
+    //Fills in the buffer as the keyboard interrupts. Exits after newline.
+    while(enter_flag == 0){}
+
+    cli();
+    //The max size of the buffer returned ranges from 1 to 128.
+    if(nbytes < BUFFER_SIZE) {
+        for(i = 0; i < nbytes; ++i) {
+            //Fills in the user entered buffer with the resulting characters.
+            ((char*) buf)[i] = char_buffer[i];
+            char_buffer[i] = ' ';                   //Clears char_buffer
+            //If it is smaller than nbytes it finishes here.
+            if(((char*)buf)[i] == '\n') {
+                bytes_read = i + 1;
+                break;
+            }
+            //Makes sure that the last character in buf is a newline
+            if((i == (nbytes - 1)) && (((char*)buf)[i] != '\n')){
+                ((char*) buf)[i] = '\n';
+                bytes_read = i + 1;
+                break;
+            }
+        }
+    } else {
+        for(i = 0; i < BUFFER_SIZE; ++i) {
+            //Fill in the user entered buffer
+            ((char*) buf)[i] = char_buffer[i];
+            char_buffer[i] = ' ';               //Clear char_buffer
+            if(((char*)buf)[i] == '\n') {
+                bytes_read = i + 1;
+                break;
+            }
+        }
+    }
+    char_count = 0;  //Go back to the start of the char_buffer.
+    enter_flag = 0;
+    sti();
+
+    return bytes_read;
 }
+
 
 /* 
  *  terminal_write(const char* buf, int32_t length)
@@ -296,43 +333,6 @@ int32_t terminal_write (int32_t fd, const void* input_buf, int32_t nbytes){
     }
     /* return # of bytes written */
     return count;
-}
-
-
-int32_t keyboard_read (int32_t fd,  uint32_t offset, void* buf, int32_t nbytes){
-    /*sanity check*/
-    if (buf == NULL){return -1;}
-    
-    int32_t char_count;
-    int32_t copy_count = 0;
-    
-    running_terminal->stdin_enable = 0;
-    /* wait until user press enter */
-    while (!(running_terminal->stdin_enable)){}
-
-    for (char_count = 0; char_count < nbytes; char_count++){
-        /* Handle buffer overflow */
-        if (char_count >= MAX_BUF_SIZE){break;}
-        /* Read until new line character */
-        if (keyboard_buf[char_count] != '\n'){
-            ((char*)buf)[char_count] = keyboard_buf[char_count];
-            copy_count++;
-        }
-        else
-        {
-            /* copy the new line character */
-            ((char*)buf)[char_count] = keyboard_buf[char_count];
-            char_count++;
-            copy_count++;
-            /* fill the user buffer with 0 */
-            for(;char_count<nbytes;char_count++){
-                ((char*)buf)[char_count] = 0;
-            }  
-            return copy_count;
-        }
-    }
-
-    return copy_count;
 }
 
 
