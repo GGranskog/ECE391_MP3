@@ -141,7 +141,7 @@ int directory_read(){
 
 }
 
-/* frame1_read_test
+/* frame1_read_test (could be changed to print frame0)
  * Inputs: None
  * Outputs: Prints out contents of frame 1
  * Side Effects: None
@@ -153,6 +153,7 @@ int frame1_read_test(){
 
 	clear();
 	uint8_t buf[174];  //buf made to support frame1 file
+	//uint8_t buf[187];
 	int i; 
 	dentry_t file;
 	int rdbn = read_dentry_by_name((uint8_t*)("frame1.txt"), &file);
