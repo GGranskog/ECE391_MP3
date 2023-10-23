@@ -143,7 +143,7 @@ int directory_read(){
 
 /* frame1_read_test
  * Inputs: None
- * Outputs: Print all known files by index
+ * Outputs: Prints out contents of frame 1
  * Side Effects: None
  * Coverage: 
  * Files: file_sys.c, file_sys.h
@@ -176,7 +176,13 @@ int frame1_read_test(){
 }
 
 
-
+/*
+ *	void rtc_test()
+ *	DESCRIPTION: tests driver functions for rtc
+ *	INPUTS: none
+ * 	OUTPUTS: none
+ *	SIDE EFFECTS: changes rtc freq
+ */
 void rtc_test()
 {
 	int i;
