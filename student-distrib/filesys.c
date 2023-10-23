@@ -5,7 +5,7 @@
     dentry_t dentry;
     boot_t* boot_block;
     int dentry_index; 
-    unint32_t data_block;
+    uint32_t data_block;
 /*
  *  initialize file system
  *  Input:  fname - name of the file, dentry - 
@@ -26,7 +26,7 @@ void init_file_sys(uint32_t file_sys){
  */
 int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
     uint32_t n;
-    int32_t n, i;
+    int32_t i;
 
     for (i=0; i<boot_block->dir_count; i++){
         n = strncmp((int8_t*)fname, boot_block->direntries[i].fname, STR_LEN);
@@ -46,11 +46,10 @@ int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
  *  Output: retuns 0 if success, else -1 on failure
  */
 int32_t read_dentry_by_index (uint32_t index, dentry_t* dentry){
-    if (i > dentry->inode_num)
 
-    strncpy(dentry->fname, boot_block->direntries[i].fname, STR_LEN);
-    dentry->ftype = boot_block->direntries[i].ftype;
-    dentry->inode_num = boot_block->direntries[i].inode_num;
+    strncpy(dentry->fname, boot_block->direntries[index].fname, STR_LEN);
+    dentry->ftype = boot_block->direntries[index].ftype;
+    dentry->inode_num = boot_block->direntries[index].inode_num;
     
     return -1;
 }
@@ -155,7 +154,7 @@ int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
 
     }
 
-    strncopy((int8_t*) buf, (int8_t*)buf_string, dir_length);
+    strncpy((int8_t*) buf, (int8_t*)buf_string, dir_length);
 
     return dir_length;
 
