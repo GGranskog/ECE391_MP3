@@ -19,6 +19,9 @@
 #define ENTRY_SIZE 63
 #define INODE_LEN 1023
 
+#define BLOCK_SIZE  4096
+#define LEN         4
+
 
 typedef struct inode{
     int32_t length;
@@ -41,7 +44,7 @@ typedef struct boot_block
     dentry_t direntries[ENTRY_SIZE];
 } boot_t;
 
-uint32_t global_idx =0;
+// uint32_t global_idx =0;
 
 
 void init_file_sys(uint32_t file_sys);

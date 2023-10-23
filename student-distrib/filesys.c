@@ -1,10 +1,11 @@
 #include "filesys.h"
 
 
-    inode_t* node;
+    inode_t* inode;
     dentry_t dentry;
     boot_t* boot_block;
     int dentry_index; 
+    unint32_t data_block;
 /*
  *  initialize file system
  *  Input:  fname - name of the file, dentry - 
@@ -13,7 +14,9 @@
 
 
 void init_file_sys(uint32_t file_sys){
-
+    boot_block = (boot_t*)file_sys;
+    inode = (inode_t*)(boot_block + BLOCK_SIZE);
+    data_block = (boot_block->inode_count+1)*BLOCK_SIZE + file_sys;
 }
 
 /*
@@ -22,14 +25,18 @@ void init_file_sys(uint32_t file_sys){
  *  Output: retuns 0 if success, else -1 on failure
  */
 int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
-    uint32_t i;
-    uint32_t rdbi;
-    for (i=0; i <ENTRY_SIZE; i++){
-        if(boot_block->direntries[i].fname == dentry->fname){
-            rdbi = read_dentry_by_index(i, dentry);
+    uint32_t n;
+    int32_t n, i;
+
+    for (i=0; i<boot_block->dir_count; i++){
+        n = strncmp((int8_t*)fname, boot_block->direntries[i].fname, STR_LEN);
+        if (n==0){
+            read_dentry_by_index(i, dentry);
+            return 0;
         }
     }
-    if (rdbi > 1){return 0;}
+  
+  
     return -1;
 }
 
@@ -39,6 +46,12 @@ int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
  *  Output: retuns 0 if success, else -1 on failure
  */
 int32_t read_dentry_by_index (uint32_t index, dentry_t* dentry){
+    if (i > dentry->inode_num)
+
+    strncpy(dentry->fname, boot_block->direntries[i].fname, STR_LEN);
+    dentry->ftype = boot_block->direntries[i].ftype;
+    dentry->inode_num = boot_block->direntries[i].inode_num;
+    
     return -1;
 }
 
