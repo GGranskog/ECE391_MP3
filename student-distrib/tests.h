@@ -18,7 +18,6 @@ int terminal_test();
 
 int exec_read_test();
 int large_read_test();
-void print_filename(uint8_t* buf)
 
 //test_terminal_read_write()
 
