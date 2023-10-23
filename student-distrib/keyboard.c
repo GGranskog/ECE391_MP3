@@ -247,7 +247,7 @@ TERMINAL DRIVER READ/WRITE
 
 
 /*
-/* 
+ 
  *  terminal_read(int32_t fd, void* buf, int32_t nbytes)
  *  DESCRIPTION: just call keyboard_read
  *                 
@@ -332,7 +332,8 @@ int32_t terminal_write(int32_t fd, const void* input_buf, int32_t nbytes) {
     int32_t count = 0;  // Count the number of characters written to the screen
 
     // Write characters onto the screen
-    for (int32_t i = 0; i < nbytes; i++) {
+    int i = 0;
+    for (int32_t i; i < nbytes; i++) {
         putc(buf[i]);
         count++;
     }
