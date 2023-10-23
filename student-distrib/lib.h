@@ -34,8 +34,8 @@ void test_interrupts(void);
 #define NUM_ROWS    25
 
 
-static int screen_x;
-static int screen_y;
+int screen_x;
+int screen_y;
 
 
 /* Port read functions */
