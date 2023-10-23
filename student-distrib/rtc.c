@@ -154,10 +154,17 @@ int32_t rtc_read(int32_t fd, void* buf, int32_t nbytes)
  *  int32_t rtc_write(int32_t fd, const void* buf, int32_t nbytes)
  *  DESCRIPTION: writes to fd
  *  INPUTS: fd - 32 bit file descriptor
-
+ *          buf - buffer array
+ *          nbytes - length of write
+ *  OUTPUTS: returns fd if successful, -1 if not
+ *  SIDE EFFECTS: changes rtc frequency
  */
 int32_t rtc_write(int32_t fd, const void* buf, int32_t nbytes)
 {
-    return 0;
+    if(set_rtc_freq(*(uint8_t*)(buf)))
+    {
+        return fd;
+    }
+    return -1
 }
 
