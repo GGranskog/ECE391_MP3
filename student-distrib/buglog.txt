@@ -28,6 +28,8 @@ Bug: The RTC is not generating periodic interrupts.
 
 Bug Description: The RTC handler does not trigger at regular intervals as expected
 
+Solution: certain values in our initialization of the idt were set up incorrectly. once the reserve3 and present were properly set for certain indices, rtc functioned properly.
+
 
 Bug Log for PIC Functions:
 
