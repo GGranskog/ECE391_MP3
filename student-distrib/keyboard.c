@@ -299,4 +299,40 @@ int32_t terminal_write (int32_t fd, const void* input_buf, int32_t nbytes){
 }
 
 
+int32_t keyboard_read (int32_t fd,  uint32_t offset, void* buf, int32_t nbytes){
+    /*sanity check*/
+    if (buf == NULL){return -1;}
+    
+    int32_t char_count;
+    int32_t copy_count = 0;
+    
+    running_terminal->stdin_enable = 0;
+    /* wait until user press enter */
+    while (!(running_terminal->stdin_enable)){}
+
+    for (char_count = 0; char_count < nbytes; char_count++){
+        /* Handle buffer overflow */
+        if (char_count >= MAX_BUF_SIZE){break;}
+        /* Read until new line character */
+        if (keyboard_buf[char_count] != '\n'){
+            ((char*)buf)[char_count] = keyboard_buf[char_count];
+            copy_count++;
+        }
+        else
+        {
+            /* copy the new line character */
+            ((char*)buf)[char_count] = keyboard_buf[char_count];
+            char_count++;
+            copy_count++;
+            /* fill the user buffer with 0 */
+            for(;char_count<nbytes;char_count++){
+                ((char*)buf)[char_count] = 0;
+            }  
+            return copy_count;
+        }
+    }
+
+    return copy_count;
+}
+
 
