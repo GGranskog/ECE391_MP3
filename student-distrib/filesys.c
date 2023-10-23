@@ -4,6 +4,7 @@
     inode_t node;
     dentry_t dentry;
     boot_t boot;
+    int dentry_index; 
 /*
  *  initialize file system
  *  Input:  fname - name of the file, dentry - 
@@ -64,7 +65,8 @@ int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t lengt
  */
 int32_t dir_open (const char* file_name){
 
-    return -1;
+    dentry_index = 0;
+    return -0;
 
 }
 
@@ -96,7 +98,49 @@ int32_t dir_close (int32_t fd){
  */
 int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
 
-    return -1;
+    if (dentry_index == -1;){
+
+        return -1;
+
+    }
+
+    if (buf == NULL){
+
+        return -1;
+
+    }
+
+    if (dentry_index >= boot_block->dir_count){
+
+        return 0;
+
+    }
+    int dir_length;
+    char* file_name;
+
+    char buf_string[STR_LEN];
+    int idx;
+
+    if (dir_length < length){
+        dir_length = STR_LEN;
+    }
+    else{
+
+        dir_length = length;
+
+    }
+
+    file_name = boot_block->direntries[dentry_index++].fname;
+
+    for(idx = 0; i < dir_length; idx++){
+
+        buf_string[i] = file_name[i];
+
+    }
+
+    strncopy((int8_t*) buf, (int8_t*)buf_string, dir_length);
+
+    return dir_length;
 
 }
 
@@ -126,7 +170,25 @@ int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
  */
 int32_t file_open (const char* file_name){
 
-    return -1;
+    dentry_t dentry;
+    uint32_t rdbi = read_dentry_by_name((uint8_t*) file_name, &dentry)
+    if (rdbi != 0){
+
+        return -1;
+
+    }
+    else if (dentry.ftype != 2){            // 2 is the file type
+
+        return -1;
+
+    }
+    else if (dentry.inode_num >= boot_block->inode_count){
+
+        return -1;
+
+    }
+    
+    return 0;
 
 }
 
@@ -140,7 +202,7 @@ int32_t file_open (const char* file_name){
  * SIDE AFFECTS: 
  */
 int32_t file_close (int32_t fd){
-
+    
     return 0;
 
 }
@@ -149,15 +211,19 @@ int32_t file_close (int32_t fd){
 /*
  * file_read
  * DESCRIPTION: reads the length (num of bytes of file)
- * INPUT: buf - used to fill from reading the file
-          length - num of bytes copied from the file
+ * INPUT: 
  * OUTPUT: none
  * RETURN: length of file read
  * SIDE AFFECTS: 
  */
-int32_t file_read (int32_t fd, uint8_t* buf, uint32_t length){
+int32_t file_read (int32_t inode_count, uint32_t offset, uint8_t* buf, uint32_t length){
 
-    return -1;
+    if (buf == NULL){
+
+        return -1
+
+    }
+    return read_data(inode_count, offset, buf, length);
 
 }
 

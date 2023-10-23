@@ -19,6 +19,7 @@
 #define ENTRY_SIZE 63
 #define INODE_LEN 1023
 
+
 typedef struct inode{
     int32_t length;
     int32_t data_block_num[INODE_LEN];
@@ -55,7 +56,7 @@ int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length);
 
 int32_t file_open (const char* file_name);
 int32_t file_close (int32_t fd);
-int32_t file_read (int32_t fd, uint8_t* buf, uint32_t length);
+int32_t file_read (int32_t inode_count, uint32_t offset, uint8_t* buf, uint32_t length);
 int32_t file_write (int32_t fd, uint8_t* buf, uint32_t length);
 
 
