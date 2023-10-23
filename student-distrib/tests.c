@@ -2,6 +2,7 @@
 #include "x86_desc.h"
 #include "lib.h"
 #include "rtc.h"
+#include "keyboard.h"
 
 #define PASS 1
 #define FAIL 0
@@ -115,6 +116,51 @@ void rtc_keyboard(){
 }
 */
 /* Checkpoint 2 tests */
+
+/* test_terminal_read_write
+ * Inputs: None
+ * Outputs: Read in the keyboard inputs to a buffer and write out the buffer to the screen
+ * Side Effects: None
+ * Coverage: terminal_read and write, handle buffer overflow
+ * Files: terminal.c, keyboard.c
+ */
+void test_terminal_read_write(){
+	char buf[BUF_SIZE];
+	int read_num = 0;
+	int write_num = 0;
+	int32_t fd = NULL;
+	
+	/*Test for terminal read and write*/
+	TEST_HEADER;
+	while (1)
+	{
+		printf("What's your name?(press 'q' to exist) ");
+		/*read in the user input to a buffer*/
+		read_num = terminal_read(fd,0,  buf, BUF_SIZE);		
+		/*Press q to quit*/		
+		if (!strncmp("q",buf,BUF_SIZE)){
+			break;
+		}
+		printf("Hello,");
+		/*write out the buffer value to the screen*/
+		write_num = terminal_write(0,buf,BUF_SIZE);
+		/*compare the read in bytes and write out bytes*/
+		printf("\nread in bytes: %d\nwrite out bytes: %d\n",read_num, write_num);
+	}
+	clear();
+}
+
+
+
+
+
+
+
+
+
+
+
+
 /* Checkpoint 3 tests */
 /* Checkpoint 4 tests */
 /* Checkpoint 5 tests */
