@@ -175,7 +175,7 @@ int32_t puts(int8_t* s) {
 void putc(uint8_t c) {
 
     if (c == BCKSPACE){
-                *(uint8_t *)(video_mem + ((NUM_COLS * screen_y + screen_x) << 1)) = ' ';
+                *(uint8_t *)(video_mem + ((NUM_COLS * screen_y + screen_x-1) << 1)) = ' ';
                 screen_x--;
     }
 
