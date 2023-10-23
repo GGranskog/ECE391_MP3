@@ -221,9 +221,8 @@ void get_char(char new_char) {
         char_buffer[char_count >= BUFFER_SIZE ? BUFFER_SIZE - 1 : char_count] = '\n';
     } else if (new_char == BCKSPACE) {
         if (char_count > 0) {
-            char_buffer[char_count - 1] = ' '; // Replace the last character with a space
 
-            //char_buffer[char_count - 1] = char_count <= BUFFER_SIZE ? ' ' : char_buffer[char_count - 1];
+            putc(new_char);
             --char_count;
         }
     } else if (char_count < BUFFER_SIZE - 1) {
