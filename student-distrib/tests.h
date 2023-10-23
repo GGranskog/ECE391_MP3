@@ -7,6 +7,7 @@ int divide_by_zero();
 int deref_null();
 //int keyboard_test();
 int paging_mr_herman();
+void rtc_freq_test();
 // int rtc_test();
 // void rtc_keyboard();
 

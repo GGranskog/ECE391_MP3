@@ -1,5 +1,6 @@
 #include "rtc.h"
 #include "lib.h"
+#include "tests.h"
 
 
 /*
@@ -13,7 +14,7 @@ void rtc_init()
     // cli(); // clear interrupt
     // outb(RTC_REG_A, RTC_SELECT);
     // outb(0x20, 0x71); 
-    set_rtc_freq(0x0F); 
+    set_rtc_freq(4); 
 
     outb(RTC_REG_B, RTC_SELECT);    // select register B and disable NMI
     char prev = inb(RTC_CMOS);
@@ -38,7 +39,7 @@ void rtc_init()
 void rtc_handler()
 {
     // cli();
-    test_interrupts();
+    //test_interrupts();
     outb(RTC_REG_C, RTC_SELECT);
     inb(RTC_CMOS);
     rtc_interrupted = 1;
@@ -48,7 +49,13 @@ void rtc_handler()
     
 }
 
-
+/*
+ *  int32_t set_rtc_freq(int32_t freq)
+ *  DESCRIPTION: Changes the clock frequency to freq
+ *  INPUTS: new frequency freq, should be a power of 2
+ *  OUTPUTS: 1 on success, -1 on fail
+ *  SIDE EFFECTS: none
+ */
 int32_t set_rtc_freq(int32_t freq)
 {
     char changed_rate;
@@ -99,15 +106,58 @@ int32_t set_rtc_freq(int32_t freq)
     return 1;
 }
 
-// reset freq to 2 Hz and return 0
-int32_t rtc_open(const char* filename)
+/*
+ *  int32_t rtc_open(const uint8_t* filename)
+ *  DESCRIPTION: sets rtc freq to 2 Hz and returns 0
+ *  INPUTS: filename - "string" for file to open
+ *  OUTPUTS: always 0
+ *  SIDE EFFECTS: none
+ */
+int32_t rtc_open(const uint8_t* filename)
 {
     set_rtc_freq(2);
     return 0;
 }
 
-// close rtc
+/*
+ *  int32_t rtc_close(int32_t fd)
+ *  DESCRIPTION: closes file and returns 0
+ *  INPUTS: fd - 32 bit file descriptor
+ *  OUTPUTS: always 0
+ *  SIDE EFFECTS: none
+ */
 int32_t rtc_close(int32_t fd)
 {
     return 0;
 }
+
+/*
+ *  int32_t rtc_read(int32_t fd, void* buf, int32_t nbytes)
+ *  DESCRIPTION: reads from fd and returns 0
+ *  INPUTS: fd - 32 bit file descriptor
+ *          buf - buffer
+ *          nbytes - number of bytes to read
+ *  OUTPUTS: number of bytes reads
+ *  SIDE EFFECTS: idles until rtc_interrupted is changed
+ */
+
+int32_t rtc_read(int32_t fd, void* buf, int32_t nbytes)
+{
+    rtc_interrupted = 0;
+    while(!rtc_interrupted) rtc_interrupted = 0;    //idle until handler is executed again
+
+    return 0;       // return 0 once interrupt has occurred
+}
+
+
+/*
+ *  int32_t rtc_write(int32_t fd, const void* buf, int32_t nbytes)
+ *  DESCRIPTION: writes to fd
+ *  INPUTS: fd - 32 bit file descriptor
+
+ */
+int32_t rtc_write(int32_t fd, const void* buf, int32_t nbytes)
+{
+    return 0;
+}
+

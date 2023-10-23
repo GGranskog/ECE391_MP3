@@ -1,6 +1,7 @@
 #include "tests.h"
 #include "x86_desc.h"
 #include "lib.h"
+#include "rtc.h"
 
 #define PASS 1
 #define FAIL 0
@@ -68,6 +69,41 @@ int deref_null(){
 // test to see if our OS sets up paging correctly
 int paging_mr_herman(){
 	return 0;
+}
+
+void rtc_freq_test(){
+	set_rtc_freq(2);
+	int count = 0;
+	while (count < 4)
+	{
+		count++;
+	}
+	count = 0;
+	set_rtc_freq(4);
+	count = 0;
+	while (count < 8)
+	{
+		count++;
+	}
+	set_rtc_freq(8);
+	count = 0;
+	while (count < 16)
+	{
+		count++;
+	}
+	set_rtc_freq(16);
+	count = 0;
+	while (count < 32)
+	{
+		count++;
+	}
+	set_rtc_freq(32);
+	count = 0;
+	while (count < 64)
+	{
+		count++;
+	}
+
 }
 
 
