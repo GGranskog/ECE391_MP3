@@ -2,6 +2,7 @@
 #include "i8259.h"
 #include "lib.h"
 
+
 /* keyboard irq number */
 #define KEYBOARD_IRQ_NUM    1
 
@@ -49,7 +50,7 @@ static char char_buffer[BUFFER_SIZE];
 int num_char    = 0;
 
 // Check for modifiers and return 1 if a modifier was pressed
-uint8_t check_for_modifier(uint8_t scan_code);
+int check_for_modifier(uint8_t scan_code);
 
 /*
 * Store every key on the keyboard and its alternate function in a lookup table
@@ -108,109 +109,102 @@ extern void keyboard_handler(void) {
     // Start critical section
     cli();
 
-    uint8_t scan_code = inb(KEYBOARD_DATA_PORT);    // take input from keyboard
+    uint8_t scan_code = inb(KEYBOARD_DATA_PORT); // Read from keyboard
 
-    if(check_for_modifier(scan_code)) {
+    if (check_for_modifier(scan_code)) {
         send_eoi(KEYBOARD_IRQ_NUM);
         sti();
         return;
     }
 
-    if((scan_code < SCANCODES_SIZE) && (scan_code > 1)) {                // ignore released output from keyboard
-        //Outputs new line and clears the backspace counter.
-        if(scan_to_ascii[scan_code][0] == '\n'){
-            num_char = 0;
+    if (scan_code >= SCANCODES_SIZE || scan_code <= 1) {
+        send_eoi(KEYBOARD_IRQ_NUM);
+        sti();
+        return;
+    }
+
+    if (scan_to_ascii[scan_code][0] == '\n') {
+        num_char = 0;
+        putc(scan_to_ascii[scan_code][0]);
+        get_char(scan_to_ascii[scan_code][0]);
+    } else if (ctrl_flag > 0 && scan_to_ascii[scan_code][0] == 'l') {
+        clear();
+        uint16_t position = screen_y * NUM_COLS + screen_x;
+        outb(0x0F, 0x3D4);
+        outb((uint8_t)(position & 0xFF), 0x3D5);
+        outb(0x0E, 0x3D4);
+        outb((uint8_t)((position >> 8) & 0xFF), 0x3D5);
+    } else if (scan_to_ascii[scan_code][0] == BCKSPACE) {
+        if (num_char > 0) {
             putc(scan_to_ascii[scan_code][0]);
             get_char(scan_to_ascii[scan_code][0]);
-        //Ctrl-l for clearing the screen
-        } else if((ctrl_flag > 0) && (scan_to_ascii[scan_code][0] == 'l')){
-            clear();
-        //Deterimes if there are still enough characters for a backspace.
-        } else if(scan_to_ascii[scan_code][0] == BCKSPACE){
-            if(num_char > 0){
-                putc(scan_to_ascii[scan_code][0]);
-                get_char(scan_to_ascii[scan_code][0]);
-                --num_char;
-            }
-        //Outputs the shifted versions of the keys pressed.
-    } else if((l_shift_flag || r_shift_flag) && (num_char < BUFFER_MAX)) {
-            //If CAPS is active the letters are made to be lower case
-            if(caps_flag &&
-               (((scan_code >= Q_UP_LIMIT) && (scan_code <= P_LOW_LIMIT)) ||
-               ((scan_code >= A_UP_LIMIT) && (scan_code <= L_LOW_LIMIT)) ||
-               ((scan_code >= Z_UP_LIMIT) && (scan_code <= M_LOW_LIMIT))) ){
-                putc(scan_to_ascii[scan_code][0]);
-                get_char(scan_to_ascii[scan_code][0]);
-                ++num_char;
-            }
-            //Otherwise the shifted versions are outputted
-            else{
-                putc(scan_to_ascii[scan_code][1]);
-                get_char(scan_to_ascii[scan_code][1]);
-                ++num_char;
-            }
-        //Prints out the captialized version if necessary to the screen
-    } else if(caps_flag && (num_char < BUFFER_MAX)){
-            if(((scan_code >= Q_UP_LIMIT) && (scan_code <= P_LOW_LIMIT)) ||
-               ((scan_code >= A_UP_LIMIT) && (scan_code <= L_LOW_LIMIT)) ||
-               ((scan_code >= Z_UP_LIMIT) && (scan_code <= M_LOW_LIMIT))){
-                putc(scan_to_ascii[scan_code][1]);
-                get_char(scan_to_ascii[scan_code][1]);
-                ++num_char;
-            }
-            //If it is not a letter it is printed as is.
-            else{
-                putc(scan_to_ascii[scan_code][0]);
-                get_char(scan_to_ascii[scan_code][0]);
-                ++num_char;
-            }
-        } else if(num_char < BUFFER_MAX){
+            --num_char;
+        }
+    } else if ((l_shift_flag || r_shift_flag) && num_char < BUFFER_MAX) {
+        if (caps_flag &&
+            ((scan_code >= Q_UP_LIMIT && scan_code <= P_LOW_LIMIT) ||
+             (scan_code >= A_UP_LIMIT && scan_code <= L_LOW_LIMIT) ||
+             (scan_code >= Z_UP_LIMIT && scan_code <= M_LOW_LIMIT))) {
+            putc(scan_to_ascii[scan_code][0]);
+            get_char(scan_to_ascii[scan_code][0]);
+            ++num_char;
+        } else {
+            putc(scan_to_ascii[scan_code][1]);
+            get_char(scan_to_ascii[scan_code][1]);
+            ++num_char;
+        }
+    } else if (caps_flag && num_char < BUFFER_MAX) {
+        if ((scan_code >= Q_UP_LIMIT && scan_code <= P_LOW_LIMIT) ||
+            (scan_code >= A_UP_LIMIT && scan_code <= L_LOW_LIMIT) ||
+            (scan_code >= Z_UP_LIMIT && scan_code <= M_LOW_LIMIT)) {
+            putc(scan_to_ascii[scan_code][1]);
+            get_char(scan_to_ascii[scan_code][1]);
+            ++num_char;
+        } else {
             putc(scan_to_ascii[scan_code][0]);
             get_char(scan_to_ascii[scan_code][0]);
             ++num_char;
         }
+    } else if (num_char < BUFFER_MAX) {
+        putc(scan_to_ascii[scan_code][0]);
+        get_char(scan_to_ascii[scan_code][0]);
+        ++num_char;
     }
 
     send_eoi(KEYBOARD_IRQ_NUM);
     sti();
 }
 
+
 /* uint8_t check_for_modifier(uint8_t scan_code)
  * Inputs: scan_code - Index of scan code sent from keyboard
  * Return Value: 1 if modifier found, 0 otherwise
  * Function: Check if scan_code is a modifier key and update global flags */
-uint8_t check_for_modifier(uint8_t scan_code) {
-    switch(scan_code)
-    {
-    //For both shift cases (uses different codes)
-    case LEFT_SHIFT_PRESS:
-        l_shift_flag = 1;
-        return 1;
-    case LEFT_SHIFT_RELEASE:
-        l_shift_flag = 0;
-        return 1;
-    case RIGHT_SHIFT_PRESS:
-        r_shift_flag = 1;
-        return 1;
-    case RIGHT_SHIFT_RELEASE:
-        r_shift_flag = 0;
-        return 1;
-    //Accounts for both right and left (uses same scan code)
-    case CTRL_PRESS:
-        ctrl_flag += 1;
-        return 1;
-    case CTRL_RELEASE:
-        ctrl_flag -= 1;
-        return 1;
-    //For when the caps key is on or off.
-    case CAPS_PRESS:
-        if(caps_flag == 1)
-          caps_flag = 0;
-        else
-          caps_flag = 1;
-        return 1;
-    default:
-        return 0;
+int check_for_modifier(uint8_t scan_code) {
+    switch(scan_code) {
+        case LEFT_SHIFT_PRESS:
+            l_shift_flag = 1;
+            return 1;
+        case LEFT_SHIFT_RELEASE:
+            l_shift_flag = 0;
+            return 1;
+        case RIGHT_SHIFT_PRESS:
+            r_shift_flag = 1;
+            return 1;
+        case RIGHT_SHIFT_RELEASE:
+            r_shift_flag = 0;
+            return 1;
+        case CTRL_PRESS:
+            ctrl_flag += 1;
+            return 1;
+        case CTRL_RELEASE:
+            ctrl_flag -= 1;
+            return 1;
+        case CAPS_PRESS:
+            caps_flag = !caps_flag;
+            return 1;
+        default:
+            return 0;
     }
 }
 
@@ -222,27 +216,88 @@ uint8_t check_for_modifier(uint8_t scan_code) {
  * Return Value: none
  * Side effects: char_buffer, char_count, and enter_flag are changed */
 void get_char(char new_char) {
-    //End the buffer with the newline and enable the enter_flag.
-    if(new_char == '\n') {
+    // End the buffer with the newline and enable the enter_flag.
+    if (new_char == '\n') {
         enter_flag = 1;
-        if(char_count >= BUFFER_SIZE)
-            char_buffer[BUFFER_SIZE - 1] = '\n';
-        else
-            char_buffer[char_count] = '\n';
-    //Clear one space of the buffer.
-    } else if(new_char == BCKSPACE) {
-        if(char_count > 0){
-            if(char_count <= BUFFER_SIZE)
-                char_buffer[char_count - 1] = ' ';
+        char_buffer[char_count >= BUFFER_SIZE ? BUFFER_SIZE - 1 : char_count] = '\n';
+    } else if (new_char == BCKSPACE) {
+        if (char_count > 0) {
+            char_buffer[char_count - 1] = char_count <= BUFFER_SIZE ? ' ' : char_buffer[char_count - 1];
             --char_count;
         }
-    //Add a new character to the buffer.
-    } else if(char_count < (BUFFER_SIZE - 1)){
+    } else if (char_count < BUFFER_SIZE - 1) {
         char_buffer[char_count] = new_char;
         ++char_count;
-    }
-    //Keep track of the available number of backspaces that can be used.
-    else{
+    } else {
         ++char_count;
     }
+}
+
+
+/* int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes);
+ * Reads in keyboard presses and stores it in the char_buffer
+ * until the newline is entered. It then stores the resulting char_buffer
+ * in the buf array entered by the user.
+ *
+ * Inputs: fd - The file descriptor value.
+ *        buf - The array that terminal read will be storing the entered
+ *              keyboard text to.
+ *     nbytes - The maximum number of characters that can be entered in buf.
+ * Return Value: The number of bytes (characters) written to the buf array.
+ * Side effects: char_buffer, char_count, and enter_flag are changed */
+int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
+    int bytes_read = 0;
+    int i;
+
+    //Fills in the buffer as the keyboard interrupts. Exits after newline.
+    while(enter_flag == 0){}
+
+    cli();
+    //The max size of the buffer returned ranges from 1 to 128.
+    if(nbytes < BUFFER_SIZE) {
+        for(i = 0; i < nbytes; ++i) {
+            //Fills in the user entered buffer with the resulting characters.
+            ((char*) buf)[i] = char_buffer[i];
+            char_buffer[i] = ' ';                   //Clears char_buffer
+            //If it is smaller than nbytes it finishes here.
+            if(((char*)buf)[i] == '\n') {
+                bytes_read = i + 1;
+                break;
+            }
+            //Makes sure that the last character in buf is a newline
+            if((i == (nbytes - 1)) && (((char*)buf)[i] != '\n')){
+                ((char*) buf)[i] = '\n';
+                bytes_read = i + 1;
+                break;
+            }
+        }
+    } else {
+        for(i = 0; i < BUFFER_SIZE; ++i) {
+            //Fill in the user entered buffer
+            ((char*) buf)[i] = char_buffer[i];
+            char_buffer[i] = ' ';               //Clear char_buffer
+            if(((char*)buf)[i] == '\n') {
+                bytes_read = i + 1;
+                break;
+            }
+        }
+    }
+    char_count = 0;  //Go back to the start of the char_buffer.
+    enter_flag = 0;
+    sti();
+
+    return bytes_read;
+}
+
+
+int32_t terminal_write(int32_t fd, const void* buf, int32_t nbytes){
+    int i;
+    char curr_char;
+    for(i = 0; i < nbytes; ++i) {
+        //Prints the given characters to the screen.
+        curr_char = ((char*) buf)[i];
+        if(curr_char != '\0')           //Skips printing out the null terminator
+            putc(curr_char);
+    }
+    return nbytes;
 }
