@@ -173,10 +173,33 @@ int32_t puts(int8_t* s) {
 void putc(uint8_t c) {
 
     if (c == BACKSPACE){
-                *(uint8_t *)(video_mem + ((NUM_COLS * screen_y + screen_x-1) << 1)) = ' ';
-                *(uint8_t *)(video_mem + ((NUM_COLS * screen_y + screen_x-1) << 1) + 1) = ATTRIB;
 
-                screen_x--;
+        if(screen_x == 0){
+            if (screen_y ==0){
+                return;
+            }
+
+            screen_x = NUM_COLS - 1;
+            screen_y--;
+            putc(' ');
+            screen_x = NUM_COLS - 1;
+            screen_y--;
+        uint16_t position = screen_y * NUM_COLS + screen_x;
+
+        outb(0x0F, 0x3D4);
+        outb((uint8_t)(position & 0xFF), 0x3D5);
+        outb(0x0E, 0x3D4);
+        outb((uint8_t)((position >> 8) & 0xFF), 0x3D5);
+
+        }else{
+            screen_x--;
+            putc(' ');
+        uint16_t position = screen_y * NUM_COLS + screen_x;
+        outb(0x0F, 0x3D4);
+        outb((uint8_t)(position & 0xFF), 0x3D5);
+        outb(0x0E, 0x3D4);
+        outb((uint8_t)((position >> 8) & 0xFF), 0x3D5);
+        }
     }
 
 
