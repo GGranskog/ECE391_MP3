@@ -45,3 +45,129 @@ int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t lengt
     return -1;
 }
 
+
+
+/*
+ * dir_open
+ * DESCRIPTION: Opens a directory. sets the index of dentry
+ * INPUT: none
+ * OUTPUT: none
+ * RETURN: 0 for success, -1 for fail
+ * SIDE AFFECTS: 
+ */
+int32_t dir_open (const char* file_name){
+
+
+
+}
+
+
+/*
+ * dir_close
+ * DESCRIPTION: Close a directory
+ * INPUT: none
+ * OUTPUT: none
+ * RETURN: 0 for success, -1 for fail
+ * SIDE AFFECTS: 
+ */
+int32_t dir_close (int32_t fd){
+
+    return 0;
+
+}
+
+
+/*
+ * dir_read
+ * DESCRIPTION: Reads a file name from the directory, which then reads the length of that file in bytes (length) and
+                fills the buf with its contents
+ * INPUT: buf - buffer that will be filled
+          length - num of bytes of the file that is read
+ * OUTPUT: none
+ * RETURN: length of file
+ * SIDE AFFECTS: 
+ */
+int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
+
+
+
+}
+
+
+/*
+ * dir_write
+ * DESCRIPTION: not used read only system
+ * INPUT: none
+ * OUTPUT: none
+ * RETURN: -1
+ * SIDE AFFECTS: 
+ */
+int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
+
+    return -1;
+
+}
+
+
+/*
+ * file_open
+ * DESCRIPTION: Opens a file that matches file_name
+ * INPUT: file_name - name of file that is gonna be opened
+ * OUTPUT: none
+ * RETURN: 0 for success, -1 for fail
+ * SIDE AFFECTS: 
+ */
+int32_t file_open (const char* file_name){
+
+
+
+}
+
+
+/*
+ * file_close
+ * DESCRIPTION: Closes a file that matches file_name
+ * INPUT: none
+ * OUTPUT: none
+ * RETURN: 0 for success, -1 for fail
+ * SIDE AFFECTS: 
+ */
+int32_t file_close (int32_t fd){
+
+    return 0;
+
+}
+
+
+/*
+ * file_read
+ * DESCRIPTION: reads the length (num of bytes of file)
+ * INPUT: buf - used to fill from reading the file
+          length - num of bytes copied from the file
+ * OUTPUT: none
+ * RETURN: length of file read
+ * SIDE AFFECTS: 
+ */
+int32_t file_read (int32_t fd, uint8_t* buf, uint32_t length){
+
+
+
+}
+
+
+/*
+ * file_write
+ * DESCRIPTION: not used - read only file
+ * INPUT: none
+ * OUTPUT: none
+ * RETURN: -1
+ * SIDE AFFECTS: 
+ */
+int32_t file_write (int32_t fd, uint8_t* buf, uint32_t length){
+
+    return -1;
+
+}
+
+
+
