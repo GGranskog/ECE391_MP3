@@ -9,7 +9,6 @@
 #define KEYBOARD_DATA_PORT  (0x60)
 #define KEYBOARD_CMD_PORT   (0x64)
 #define SCANCODES_SIZE      (58)
-#define RELEASE_OFFSET      (0x80)
 
 #define BUFFER_MAX         (127)
 
@@ -136,7 +135,7 @@ extern void keyboard_handler(void) {
         outb((uint8_t)((position >> 8) & 0xFF), 0x3D5);
     } else if (scan_to_ascii[scan_code][0] == BCKSPACE) {
         if (num_char > 0) {
-            putc(scan_to_ascii[scan_code][0]);
+            //putc(scan_to_ascii[scan_code][0]);
             get_char(scan_to_ascii[scan_code][0]);
             --num_char;
         }
