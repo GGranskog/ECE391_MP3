@@ -138,6 +138,7 @@ extern void keyboard_handler(void) {
             get_char(scan_to_ascii[scan_code][0]);
             --num_char;
         }
+        
     } else if ((l_shift_flag || r_shift_flag) && num_char < BUFFER_MAX) {
         if (caps_flag &&
             ((scan_code >= Q_UP_LIMIT && scan_code <= P_LOW_LIMIT) ||
