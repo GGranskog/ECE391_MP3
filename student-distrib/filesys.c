@@ -2,7 +2,7 @@
 
 
     inode_t* node;
-    //dentry_t* d_ent;
+    dentry_t d_ent;
     boot_t* boot_block;
     int dentry_index; 
     uint32_t data_block;
@@ -15,7 +15,7 @@
 
 void init_file_sys(uint32_t file_sys){
     boot_block = (boot_t*)file_sys;
-    node = (inode_t*)(boot_block + BLOCK_SIZE);
+    node = (inode_t*)(file_sys + BLOCK_SIZE);
     data_block = (boot_block->inode_count + 1)*BLOCK_SIZE + file_sys;
 }
 
@@ -27,9 +27,10 @@ void init_file_sys(uint32_t file_sys){
 int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
     uint32_t n;
     int32_t i;
-
+    int len = STR_LEN;
+    if (fname == NULL || dentry->fname == NULL || strlen((int8_t*)fname) > len) {return -1;}
     for (i=0; i<boot_block->dir_count; i++){
-        n = strncmp((int8_t*)fname, boot_block->direntries[i].fname, STR_LEN);
+        n = strncmp((int8_t*)fname, (int8_t*)boot_block->direntries[i].fname, len);
         if (n==0){
             read_dentry_by_index(i, dentry);
             return 0;
@@ -39,6 +40,16 @@ int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
   
     return -1;
 }
+
+
+/*
+ * iterate through fname by maxfile name
+ check if its not null
+ if dir file name is != 
+ *
+ *
+ */
+
 
 /*
  *  Pass dentry with the file name, file type, and inode number for the file, then return 0

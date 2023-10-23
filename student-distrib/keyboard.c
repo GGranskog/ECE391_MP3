@@ -248,7 +248,7 @@ TERMINAL DRIVER READ/WRITE
 */
 
 
-/*
+
 /* 
  *  terminal_read(int32_t fd, void* buf, int32_t nbytes)
  *  DESCRIPTION: just call keyboard_read

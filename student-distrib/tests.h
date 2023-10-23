@@ -12,8 +12,8 @@ int paging_mr_herman();
 void rtc_freq_test();
 // int rtc_test();
 // void rtc_keyboard();
-void frame1_read_test();
-void directory_read();
+int frame1_read_test();
+int directory_read();
 int terminal_test();
 //test_terminal_read_write()
 

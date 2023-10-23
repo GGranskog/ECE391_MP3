@@ -123,7 +123,7 @@ int terminal_test(){
  * Coverage: 
  * Files: file_sys.c, file_sys.h
  */
-void directory_read(){
+int directory_read(){
 
 	clear();
 	uint8_t buf[4096];
@@ -136,7 +136,7 @@ void directory_read(){
 
 	}
 
-	//return PASS;
+	return PASS;
 
 
 }
@@ -149,13 +149,14 @@ void directory_read(){
  * Files: file_sys.c, file_sys.h
  */
 
-void frame1_read_test(){
+int frame1_read_test(){
 
 	clear();
 	uint8_t buf[174];  //buf made to support frame1 file
 	int i; 
 	dentry_t file;
 	int rdbn = read_dentry_by_name((uint8_t*)("frame1.txt"), &file);
+	// int rdbn = read_dentry_by_name((uint8_t*)("frame0.txt"), &file);
 
 	if (rdbn == -1){
 
@@ -171,7 +172,7 @@ void frame1_read_test(){
 
 	}
 
-	//return PASS;
+	return PASS;
 }
 
 
@@ -180,19 +181,20 @@ void rtc_test()
 {
 	int i;
 	int j;
-	for (int i = 2; i <= 1024; i *= 2)
+	for (i = 2; i <= 1024;i *= 2)
 	{
 		rtc_write(i, 0, 0);
-		for (int j = 0; j < 2; j++)
+		for (j = 0; j < 2; j++)
 		{
 			rtc_read(0, 0, 0);
 			printf("1");
 		}
+	
 	}
 	rtc_open(0);
-	for (int i = 0; i < 5; i++)
+	for (i = 0; i < 5; i++)
 	{
-		rtc_read(0, 0, 0)
+		rtc_read(0, 0, 0);
 	}
 }
 
@@ -217,7 +219,10 @@ void launch_tests(){
 	// launch your tests here
 	// TEST_OUTPUT("deref_null", deref_null());
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
-	// 
+	// TEST_OUTPUT("term_driver_test", term_driver_test());  
+	// TEST_OUTPUT("rtc_test", rtc_test());
+	TEST_OUTPUT("frame1_read_test", frame1_read_test());
+	// TEST_OUTPUT("directory_read", directory_read());
 
-	term_driver_test();  
+
 }

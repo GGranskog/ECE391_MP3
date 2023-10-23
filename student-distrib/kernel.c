@@ -12,6 +12,7 @@
 #include "paging.h"
 #include "rtc.h"
 #include "keyboard.h"
+#include "filesys.h"
 
 #define RUN_TESTS
 
@@ -144,6 +145,9 @@ void entry(unsigned long magic, unsigned long addr) {
     idt_init();
     i8259_init();
     rtc_init();
+    module_t* m = (module_t*)mbi->mods_addr;
+    init_file_sys(m->mod_start);
+
     init_page();
     //clear();
     keyboard_init();
