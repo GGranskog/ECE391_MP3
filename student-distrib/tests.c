@@ -73,40 +73,6 @@ int paging_mr_herman(){
 	return 0;
 }
 
-void rtc_freq_test(){
-	set_rtc_freq(2);
-	int count = 0;
-	while (count < 4)
-	{
-		count++;
-	}
-	count = 0;
-	set_rtc_freq(4);
-	count = 0;
-	while (count < 8)
-	{
-		count++;
-	}
-	set_rtc_freq(8);
-	count = 0;
-	while (count < 16)
-	{
-		count++;
-	}
-	set_rtc_freq(16);
-	count = 0;
-	while (count < 32)
-	{
-		count++;
-	}
-	set_rtc_freq(32);
-	count = 0;
-	while (count < 64)
-	{
-		count++;
-	}
-
-}
 
 
 
@@ -125,30 +91,29 @@ void rtc_keyboard(){
  * Coverage: terminal_read and write, handle buffer overflow
  * Files: terminal.c, keyboard.c
  */
-void test_terminal_read_write(){
-	char buf[BUF_SIZE];
-	int read_num = 0;
-	int write_num = 0;
-	//int32_t fd = NULL;
-	
-	/*Test for terminal read and write*/
-	TEST_HEADER;
-	while (1)
-	{
-		printf("What's your name?(press 'q' to exist) ");
-		/*read in the user input to a buffer*/
-		read_num = terminal_read(0,  buf, BUF_SIZE);		
-		/*Press q to quit*/		
-		if (!strncmp("q",buf,BUF_SIZE)){
-			break;
-		}
-		printf("Hello,");
-		/*write out the buffer value to the screen*/
-		write_num = terminal_write(0,buf,BUF_SIZE);
-		/*compare the read in bytes and write out bytes*/
-		printf("\nread in bytes: %d\nwrite out bytes: %d\n",read_num, write_num);
-	}
-	clear();
+
+int terminal_test(){
+    TEST_HEADER;
+    //int result = PASS;
+    int nbytes;
+    char buf[1024];
+    while(1){
+        //Testing a buffer smaller than 128.
+        terminal_write(0, (uint8_t*)"TESTING size 10\n", 16);
+        nbytes = terminal_read(0, buf, 10);
+        terminal_write(0, buf, nbytes);
+
+        //Testing a buffer at the max buffer size
+        terminal_write(0, (uint8_t*)"TESTING size 128\n", 17);
+        nbytes = terminal_read(0, buf, 128);
+        terminal_write(0, buf, nbytes);
+
+        //Testing a buffer greater than the max buffer size
+        terminal_write(0, (uint8_t*)"TESTING size 129\n", 17);
+        nbytes = terminal_read(0, buf, 150);
+        terminal_write(0, buf, nbytes);
+    }
+    return PASS;
 }
 
 /* dir_read
@@ -211,7 +176,25 @@ void frame1_read_test(){
 
 
 
-
+void rtc_test()
+{
+	int i;
+	int j;
+	for (int i = 2; i <= 1024; i *= 2)
+	{
+		rtc_write(i, 0, 0);
+		for (int j = 0; j < 2; j++)
+		{
+			rtc_read(0, 0, 0);
+			printf("1");
+		}
+	}
+	rtc_open(0);
+	for (int i = 0; i < 5; i++)
+	{
+		rtc_read(0, 0, 0)
+	}
+}
 
 
 
@@ -236,5 +219,5 @@ void launch_tests(){
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
 	// 
 
-	test_terminal_read_write();  
+	term_driver_test();  
 }
