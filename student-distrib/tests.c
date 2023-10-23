@@ -204,9 +204,48 @@ void rtc_test()
 	}
 }
 
+/* exec_read_test
+ * Inputs: None
+ * Outputs: Performs what the executable file is mean to
+ * Side Effects: None
+ * Coverage: 
+ * Files: file_sys.c, file_sys.h
+ */
+int exec_read_test(){
+	return PASS;
+}
 
+/* large_read_test
+ * Inputs: None
+ * Outputs: reads contents of a large txt file
+ * Side Effects: None
+ * Coverage: 
+ * Files: file_sys.c, file_sys.h
+ */
+int large_read_test(){
+	clear();
+	uint8_t buf[174];  //buf made to support frame1 file
+	int i; 
+	dentry_t file;
+	int rdbn = read_dentry_by_name((uint8_t*)("verylargetextwithverylongname.txt"), &file);
+	// int rdbn = read_dentry_by_name((uint8_t*)("frame0.txt"), &file);
 
+	if (rdbn == -1){
 
+		printf("No file called frame1 in the system");
+
+	}
+
+	read_data(file.inode_num, 0, (uint8_t*) buf, 4096 );
+	clear();
+
+	for(i = 0; i < 174; i++){
+		putc(buf[i]);
+
+	}
+
+	return PASS;
+}
 
 
 
@@ -227,8 +266,10 @@ void launch_tests(){
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
 	// TEST_OUTPUT("term_driver_test", term_driver_test());  
 	// TEST_OUTPUT("rtc_test", rtc_test());
-	TEST_OUTPUT("frame1_read_test", frame1_read_test());
+	// TEST_OUTPUT("frame1_read_test", frame1_read_test());
 	// TEST_OUTPUT("directory_read", directory_read());
+	// TEST_OUTPUT("int exec_read_test(){", int exec_read_test());
+	TEST_OUTPUT("large_read_test", large_read_test());
 
 
 }

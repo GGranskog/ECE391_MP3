@@ -16,7 +16,7 @@
 #define STR_LEN 32
 #define D_ENT_SIZE 24
 #define BOOT_SIZE 52
-#define ENTRY_SIZE 63
+#define ENTRY_SIZE 63   
 #define INODE_LEN 1023
 
 #define BLOCK_SIZE  4096

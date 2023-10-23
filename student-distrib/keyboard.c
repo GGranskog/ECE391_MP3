@@ -333,7 +333,7 @@ int32_t terminal_write(int32_t fd, const void* input_buf, int32_t nbytes) {
 
     // Write characters onto the screen
     int i = 0;
-    for (int32_t i; i < nbytes; i++) {
+    for (i; i < nbytes; i++) {
         putc(buf[i]);
         count++;
     }
