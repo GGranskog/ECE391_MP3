@@ -48,7 +48,7 @@ char scan_to_ascii[SCANCODES_SIZE][2] = {
     {'7', '&'}, {'8', '*'},
     {'9', '('}, {'0', ')'},
     {'-', '_'}, {'=', '+'},
-    BACKSPACE, BACKSPACE}, {' ', ' '},
+    {BACKSPACE, BACKSPACE}, {' ', ' '},
     {'q', 'Q'}, {'w', 'W'},
     {'e', 'E'}, {'r', 'R'},
     {'t', 'T'}, {'y', 'Y'},

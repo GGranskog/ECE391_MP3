@@ -8,7 +8,7 @@
 #define NUM_ROWS    25
 #define ATTRIB      0x7
 
-#define BCKSPACE            (0x08)
+#define BACKSPACE            (0x08)
 
 
 static char* video_mem = (char *)VIDEO;
