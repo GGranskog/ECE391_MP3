@@ -143,7 +143,7 @@ void directory_read(){
 
 /* frame1_read_test
  * Inputs: None
- * Outputs: Print all known files by index
+ * Outputs: Prints out contents of frame 1
  * Side Effects: None
  * Coverage: 
  * Files: file_sys.c, file_sys.h
