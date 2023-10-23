@@ -19,7 +19,7 @@ int check_for_modifier(uint8_t scan_code);
 extern void keyboard_handler(void);
 
 
-int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes)/* write to the terminal with the contant in the buf of length */
+int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes);/* write to the terminal with the contant in the buf of length */
 int32_t terminal_write (int32_t fd, const void* input_buf, int32_t nbytes);
 
 

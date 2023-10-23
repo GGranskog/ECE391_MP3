@@ -16,7 +16,7 @@
 void init_file_sys(uint32_t file_sys){
     boot_block = (boot_t*)file_sys;
     inode = (inode_t*)(boot_block + BLOCK_SIZE);
-    d_ent - boot_block->direntries;
+    // d_ent - boot_block->direntries;
     data_block = (boot_block->inode_count + 1)*BLOCK_SIZE + file_sys;
 }
 
@@ -63,7 +63,8 @@ int32_t read_dentry_by_index (uint32_t index, dentry_t* dentry){
  *          0 means all bytes were read and EOF was reached, -1 means failure
  */
 int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t length){
-    uint32_t i, idx, byte=0;
+    uint32_t i, idx;
+    // byte=0;
     for (i = 0; i < length; i++){
         idx = i + offset;
     }
