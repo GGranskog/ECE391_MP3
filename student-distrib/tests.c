@@ -73,40 +73,6 @@ int paging_mr_herman(){
 	return 0;
 }
 
-void rtc_freq_test(){
-	set_rtc_freq(2);
-	int count = 0;
-	while (count < 4)
-	{
-		count++;
-	}
-	count = 0;
-	set_rtc_freq(4);
-	count = 0;
-	while (count < 8)
-	{
-		count++;
-	}
-	set_rtc_freq(8);
-	count = 0;
-	while (count < 16)
-	{
-		count++;
-	}
-	set_rtc_freq(16);
-	count = 0;
-	while (count < 32)
-	{
-		count++;
-	}
-	set_rtc_freq(32);
-	count = 0;
-	while (count < 64)
-	{
-		count++;
-	}
-
-}
 
 
 
@@ -234,7 +200,25 @@ void frame1_read_test(){
 
 
 
-
+void rtc_test()
+{
+	int i;
+	int j;
+	for (int i = 2; i <= 1024; i *= 2)
+	{
+		rtc_write(i, 0, 0);
+		for (int j = 0; j < 2; j++)
+		{
+			rtc_read(0, 0, 0);
+			printf("1");
+		}
+	}
+	rtc_open(0);
+	for (int i = 0; i < 5; i++)
+	{
+		rtc_read(0, 0, 0)
+	}
+}
 
 
 
