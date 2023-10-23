@@ -26,8 +26,6 @@
 #define BUFFER_SIZE         128
 
 
-#define SUCCESS 0
-#define FAIL    -1
 
 
 /* Global Flags */
@@ -263,40 +261,47 @@ int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
     int bytes_read = 0;
     int i;
 
-    //Fills in the buffer as the keyboard interrupts. Exits after newline.
-    while(enter_flag == 0){}
+    // Wait for Enter key press
+    while (enter_flag == 0) {}
 
     cli();
-    //The max size of the buffer returned ranges from 1 to 128.
-    if(nbytes < BUFFER_SIZE) {
-        for(i = 0; i < nbytes; ++i) {
-            //Fills in the user entered buffer with the resulting characters.
-            ((char*) buf)[i] = char_buffer[i];
-            char_buffer[i] = ' ';                   //Clears char_buffer
-            //If it is smaller than nbytes it finishes here.
-            if(((char*)buf)[i] == '\n') {
-                bytes_read = i + 1;
-                break;
-            }
-            //Makes sure that the last character in buf is a newline
-            if((i == (nbytes - 1)) && (((char*)buf)[i] != '\n')){
-                ((char*) buf)[i] = '\n';
-                bytes_read = i + 1;
-                break;
-            }
+
+    // Ensure nbytes is within buffer size
+    nbytes = (nbytes < BUFFER_SIZE) ? nbytes : BUFFER_SIZE;
+
+    for (i = 0; i < nbytes; ++i) {
+        ((char*)buf)[i] = char_buffer[i];
+        char_buffer[i] = ' ';
+
+        // Exit if newline encountered
+        if (((char*)buf)[i] == '\n') {
+            bytes_read = i + 1;
+            break;
         }
-    } else {
-        for(i = 0; i < BUFFER_SIZE; ++i) {
-            //Fill in the user entered buffer
-            ((char*) buf)[i] = char_buffer[i];
-            char_buffer[i] = ' ';               //Clear char_buffer
-            if(((char*)buf)[i] == '\n') {
+
+        // Ensure the last character in buf is newline
+        if (i == nbytes - 1 && ((char*)buf)[i] != '\n') {
+            ((char*)buf)[i] = '\n';
+            bytes_read = i + 1;
+            break;
+        }
+    }
+
+    // If nbytes exceeds buffer size, continue filling the buffer
+    if (nbytes >= BUFFER_SIZE) {
+        for (i = nbytes; i < BUFFER_SIZE; ++i) {
+            ((char*)buf)[i] = char_buffer[i];
+            char_buffer[i] = ' ';
+
+            // Exit if newline encountered
+            if (((char*)buf)[i] == '\n') {
                 bytes_read = i + 1;
                 break;
             }
         }
     }
-    char_count = 0;  //Go back to the start of the char_buffer.
+
+    char_count = 0;  // Reset char_buffer position
     enter_flag = 0;
     sti();
 
@@ -315,23 +320,24 @@ int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
  *  RETURN VALUE: count -- number of bytes written 
  *                or -1 for fail
  */
-int32_t terminal_write (int32_t fd, const void* input_buf, int32_t nbytes){
-   
-    /* change buffer pointer type to char* */
+int32_t terminal_write(int32_t fd, const void* input_buf, int32_t nbytes) {
+    // Change buffer pointer type to char*
     const char* buf = input_buf;
-    /* return -1 if buf is invaild */
-    if(buf == NULL){
-        return FAIL;
+
+    // Check if buf is invalid and return -1 in such cases
+    if (buf == NULL) {
+        return -1;
     }
 
-    /* count # of chars put on screen */
-    int32_t count;  
+    int32_t count = 0;  // Count the number of characters written to the screen
 
-    /* write chars onto screen  */
-    for(count = 0; count < nbytes; count++){
-        putc(buf[count]);
+    // Write characters onto the screen
+    for (int32_t i = 0; i < nbytes; i++) {
+        putc(buf[i]);
+        count++;
     }
-    /* return # of bytes written */
+
+    // Return the total number of bytes written
     return count;
 }
 
