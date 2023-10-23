@@ -3,7 +3,7 @@
 #include "lib.h"
 #include "rtc.h"
 #include "keyboard.h"
-#include "file_sys.h"
+#include "filesys.h"
 
 #define PASS 1
 #define FAIL 0
@@ -158,7 +158,7 @@ void test_terminal_read_write(){
  * Coverage: 
  * Files: file_sys.c, file_sys.h
  */
-void dir_read(){
+void directory_read(){
 
 	clear();
 	uint8_t buf[4096];

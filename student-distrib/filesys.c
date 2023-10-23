@@ -1,9 +1,9 @@
 #include "filesys.h"
 
 
-    inode_t node;
+    inode_t* node;
     dentry_t dentry;
-    boot_t boot;
+    boot_t* boot_block;
     int dentry_index; 
 /*
  *  initialize file system
@@ -23,7 +23,12 @@ void init_file_sys(uint32_t file_sys){
  */
 int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry){
     uint32_t i;
-    uint32_t rdbi = read_dentry_by_index(i, dentry);
+    uint32_t rdbi;
+    for (i=0; i <ENTRY_SIZE; i++){
+        if(boot_block->direntries[i].fname == dentry->fname){
+            rdbi = read_dentry_by_index(i, dentry);
+        }
+    }
     if (rdbi > 1){return 0;}
     return -1;
 }
@@ -48,7 +53,6 @@ int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t lengt
     uint32_t i, idx, byte=0;
     for (i = 0; i < length; i++){
         idx = i + offset;
-        idx += byte;
     }
     return -1;
 }
@@ -98,7 +102,7 @@ int32_t dir_close (int32_t fd){
  */
 int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
 
-    if (dentry_index == -1;){
+    if (dentry_index == -1){
 
         return -1;
 
@@ -119,7 +123,7 @@ int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
     char* file_name;
 
     char buf_string[STR_LEN];
-    int idx;
+    int idx, i;
 
     if (dir_length < length){
         dir_length = STR_LEN;
@@ -171,7 +175,7 @@ int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
 int32_t file_open (const char* file_name){
 
     dentry_t dentry;
-    uint32_t rdbi = read_dentry_by_name((uint8_t*) file_name, &dentry)
+    uint32_t rdbi = read_dentry_by_name((uint8_t*) file_name, &dentry);
     if (rdbi != 0){
 
         return -1;
@@ -220,10 +224,10 @@ int32_t file_read (int32_t inode_count, uint32_t offset, uint8_t* buf, uint32_t 
 
     if (buf == NULL){
 
-        return -1
+        return -1;
 
     }
-    return read_data(inode_count, offset, (uint8_t*) buf, length);
+    return read_data(inode_count, offset, buf, length);
 
 }
 
