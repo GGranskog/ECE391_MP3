@@ -171,7 +171,7 @@ void directory_read(){
 
 	}
 
-	return PASS;
+	//return PASS;
 
 
 }

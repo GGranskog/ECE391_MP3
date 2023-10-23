@@ -1,6 +1,8 @@
 #ifndef TESTS_H
 #define TESTS_H
 
+
+#define BUF_SIZE 128
 // test launcher
 void launch_tests();
 int divide_by_zero();
