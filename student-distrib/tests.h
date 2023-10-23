@@ -11,4 +11,7 @@ void rtc_freq_test();
 // int rtc_test();
 // void rtc_keyboard();
 
+
+//test_terminal_read_write()
+
 #endif /* TESTS_H */
