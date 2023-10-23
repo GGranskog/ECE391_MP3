@@ -235,3 +235,63 @@ void get_char(char new_char) {
         ++char_count;
     }
 }
+
+
+/*
+
+TERMINAL DRIVER READ/WRITE
+*/
+
+
+/*
+/* 
+ *  terminal_read(int32_t fd, void* buf, int32_t nbytes)
+ *  DESCRIPTION: just call keyboard_read
+ *                 
+ *  INPUTS: fd: file dir, not used for now
+ *          const char* buf, the input buf
+ *          int32_t length, length of the buf
+ *  OUTPUTS: fill n Bytes in the buf
+ *  RETURN VALUE: ret -- number of bytes read
+ */
+int32_t terminal_read(int32_t fd, uint32_t offset, void* buf, int32_t nbytes){
+    if (buf==NULL){return FAIL;}
+    if (nbytes < 0){return FAIL;}
+    int32_t ret = keyboard_read(fd, offset, buf, nbytes);
+    return ret;
+
+}
+
+/* 
+ *  terminal_write(const char* buf, int32_t length)
+ *  DESCRIPTION: write to the terminal with
+ *              the contant in the buf of length
+ *                 
+ *  INPUTS: const char* buf, the input buf
+ *          int32_t length, length of the buf
+ *  OUTPUTS: write and display i=on the terminal
+ *  RETURN VALUE: count -- number of bytes written 
+ *                or -1 for fail
+ */
+int32_t terminal_write (int32_t fd, const void* input_buf, int32_t nbytes){
+   
+    /* change buffer pointer type to char* */
+    const char* buf = input_buf;
+    /* return -1 if buf is invaild */
+    if(buf == NULL){
+        return FAIL;
+    }
+
+    /* count # of chars put on screen */
+    int32_t count;  
+
+    /* write chars onto screen  */
+    for(count = 0; count < nbytes; count++){
+        putc(buf[count]);
+    }
+    /* return # of bytes written */
+    return count;
+}
+
+
+
