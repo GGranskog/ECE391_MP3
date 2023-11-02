@@ -39,7 +39,7 @@ void rtc_init()
 void rtc_handler()
 {
     // cli();
-    test_interrupts();
+    // test_interrupts();
     outb(RTC_REG_C, RTC_SELECT);
     inb(RTC_CMOS);
     rtc_interrupted = 1;

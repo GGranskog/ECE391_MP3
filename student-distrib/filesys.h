@@ -45,7 +45,12 @@ typedef struct boot_block
 } boot_t;
 
 // uint32_t global_idx =0;
-
+inode_t* node;
+dentry_t d_ent;
+boot_t* boot_block;
+int dentry_index; 
+uint32_t data_block;
+    
 
 void init_file_sys(uint32_t file_sys);
 int32_t read_dentry_by_name (const uint8_t* fname, dentry_t* dentry);

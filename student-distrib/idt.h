@@ -5,7 +5,9 @@
 
 #define VECTOR_INTERRUPT_START 0x20
 #define VECTOR_INTERRUPT_END 0x2F
-#define VECTOR_SYS_CALL 0x80
+#define KEYBOARD_VECTOR 0x21
+#define RTC_VECTOR 0x28
+#define SYSCALL_VECTOR 0x80
 
 void idt_init();
 
