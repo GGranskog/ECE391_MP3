@@ -14,7 +14,7 @@ void rtc_init()
     // cli(); // clear interrupt
     // outb(RTC_REG_A, RTC_SELECT);
     // outb(0x20, 0x71); 
-    set_rtc_freq(4); 
+    //set_rtc_freq(4); 
 
     outb(RTC_REG_B, RTC_SELECT);    // select register B and disable NMI
     char prev = inb(RTC_CMOS);
@@ -39,7 +39,7 @@ void rtc_init()
 void rtc_handler()
 {
     // cli();
-    //test_interrupts();
+    test_interrupts();
     outb(RTC_REG_C, RTC_SELECT);
     inb(RTC_CMOS);
     rtc_interrupted = 1;
@@ -161,7 +161,7 @@ int32_t rtc_read(int32_t fd, void* buf, int32_t nbytes)
  */
 int32_t rtc_write(int32_t fd, const void* buf, int32_t nbytes)
 {
-    if(set_rtc_freq(*(uint8_t*)(buf)))
+    if(set_rtc_freq(fd))
     {
         return fd;
     }
