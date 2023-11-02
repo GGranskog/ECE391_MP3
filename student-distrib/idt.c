@@ -1,6 +1,7 @@
 #include "idt.h"
 #include "rtc.h"
 #include "keyboard.h"
+#include "devices.h"
 
 
 /* void init_idt() 
