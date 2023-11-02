@@ -1,11 +1,7 @@
 #include "filesys.h"
 
 
-    inode_t* node;
-    dentry_t d_ent;
-    boot_t* boot_block;
-    int dentry_index; 
-    uint32_t data_block;
+
 /*
  *  initialize file system
  *  Input:  fname - name of the file, dentry - 
