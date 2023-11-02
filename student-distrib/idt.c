@@ -31,7 +31,7 @@ idt_init()
         idt[i].size = 1;
         idt[i].seg_selector = KERNEL_CS;
 
-        if(i == VECTOR_SYS_CALL){
+        if(i == SYSCALL_VECTOR){
             idt[i].present = 1;
             idt[i].dpl = 3;
         }
@@ -72,5 +72,4 @@ idt_init()
     SET_IDT_ENTRY(idt[KEYBOARD_VECTOR], keyboard_asm); //IDT ENTRY to keyboard is 0x21
     SET_IDT_ENTRY(idt[RTC_VECTOR], rtc_asm);    //IDT ENTRY TO rtc is 0x28
     SET_IDT_ENTRY(idt[SYSCALL_VECTOR], sys_call); // IDT ENTRY to syscalls is 0x80
-    idt[0x80].present = 1;
 }
