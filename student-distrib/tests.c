@@ -188,23 +188,8 @@ int frame1_read_test(){
  */
 void rtc_test()
 {
-	int i;
-	int j;
-	for (i = 2; i <= 1024;i *= 2)
-	{
-		rtc_write(i, 0, 0);
-		for (j = 0; j < 2; j++)
-		{
-			rtc_read(0, 0, 0);
-			printf("1");
-		}
-	
-	}
 	rtc_open(0);
-	for (i = 0; i < 5; i++)
-	{
-		rtc_read(0, 0, 0);
-	}
+	rtc_write(16, 0, 0);
 }
 
 /* exec_read_test
@@ -267,7 +252,8 @@ void launch_tests(){
 	// launch your tests here
 	// TEST_OUTPUT("deref_null", deref_null());
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
-	terminal_test();  
+	//terminal_test(); 
+	rtc_test();
 	// TEST_OUTPUT("rtc_test", rtc_test());
 	// TEST_OUTPUT("frame1_read_test", frame1_read_test());
 	// TEST_OUTPUT("directory_read", directory_read());
