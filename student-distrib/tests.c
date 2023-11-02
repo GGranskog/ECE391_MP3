@@ -235,7 +235,7 @@ int large_read_test(){
 
 	if (rdbn == -1){
 
-		printf("No file called frame1 in the system");
+		printf("No file called largetext in the system");
 
 	}
 
