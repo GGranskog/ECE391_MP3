@@ -71,4 +71,6 @@ idt_init()
     idt[0x28].present = 1;
     SET_IDT_ENTRY(idt[0x21], keyboard_asm); //IDT ENTRY to keyboard is 0x21
     SET_IDT_ENTRY(idt[0x28], rtc_asm);    //IDT ENTRY TO rtc is 0x28
+    // SET_IDT_ENTRY(idt[0x80], syscall_asm); need to make asm file for sys calls
+    // idt[0x80].present = 1;
 }
