@@ -1,4 +1,4 @@
-#define ASM
+#define ASM     1
 
 .text
 .globl sys_call

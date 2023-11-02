@@ -11,7 +11,7 @@
  * RETURN:  0
  * SIDE AFFECTS: executes command
  */
-int32_t system_execute(uint8_t* cmd){
+int32_t exec(uint8_t* cmd){
     return 0;
 }
 
@@ -24,7 +24,7 @@ int32_t system_execute(uint8_t* cmd){
  * RETURN:  0
  * SIDE AFFECTS: halts program when finished or error occurs
  */
-int32_t system_halt(uint8_t status){
+int32_t halt(uint8_t status){
     return 0;
 }
 
@@ -37,7 +37,7 @@ int32_t system_halt(uint8_t status){
  * RETURN:  0
  * SIDE AFFECTS: opens the file for reading/writing
  */
-int32_t system_open(const uint8_t* fname){
+int32_t open(const uint8_t* fname){
     return 0;
 }
 
@@ -50,7 +50,7 @@ int32_t system_open(const uint8_t* fname){
  * RETURN:  0
  * SIDE AFFECTS: closes the file that was read/written
  */
-int32_t system_close(int32_t fd){
+int32_t close(int32_t fd){
     return 0;
 }
 
@@ -65,7 +65,7 @@ int32_t system_close(int32_t fd){
  * RETURN:  0
  * SIDE AFFECTS: read a file
  */
-int32_t system_read(int32_t fd, const void* buf, int32_t nbytes){
+int32_t read(int32_t fd, const void* buf, int32_t nbytes){
     return 0;
 }
 
@@ -80,7 +80,6 @@ int32_t system_read(int32_t fd, const void* buf, int32_t nbytes){
  * RETURN:  0
  * SIDE AFFECTS: write to a file
  */
-int32_t system_write(int32_t fd, const void* buf, int32_t nbytes){
+int32_t write(int32_t fd, const void* buf, int32_t nbytes){
     return 0;
 }
-
