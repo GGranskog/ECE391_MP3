@@ -267,12 +267,12 @@ void launch_tests(){
 	// launch your tests here
 	// TEST_OUTPUT("deref_null", deref_null());
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
-	// TEST_OUTPUT("term_driver_test", term_driver_test());  
+	terminal_test();  
 	// TEST_OUTPUT("rtc_test", rtc_test());
 	// TEST_OUTPUT("frame1_read_test", frame1_read_test());
 	// TEST_OUTPUT("directory_read", directory_read());
 	// TEST_OUTPUT("int exec_read_test(){", int exec_read_test());
-	TEST_OUTPUT("large_read_test", large_read_test());
+	// TEST_OUTPUT("large_read_test", large_read_test());
 
 
 }
