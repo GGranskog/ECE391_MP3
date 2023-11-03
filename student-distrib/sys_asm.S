@@ -8,20 +8,20 @@ jump_table:
 .globl sys_call
 
 sys_call:
-    pushfl
-    pushl %ebp    
-    pushl %edi
-    pushl %esi
-    pushl %edx    
-    pushl %ecx
-    pushl %ebx  
+    // pushfl
+    pushl   %ebp    
+    pushl   %edi
+    pushl   %esi
+    pushl   %edx    
+    pushl   %ecx
+    pushl   %ebx  
 
     cmpl    0x1, %eax
     jb      ERR
     cmpl    0x6, %eax // make sure to change for when we add in the rest of the syscalls 
     ja      ERR
 
-    call    *jump_table(,%eax, 4)
+    call    *jump_table(0 ,%eax, 4)
 
 done:
     popl    %ebx
@@ -30,7 +30,7 @@ done:
     popl    %esi
     popl    %edi
     popl    %ebp
-    popfl
+    // popfl
     iret
 
 ERR:    // out of index sys_call
