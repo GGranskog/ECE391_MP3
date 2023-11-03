@@ -12,6 +12,8 @@
  * SIDE AFFECTS: executes command
  */
 int32_t sys_exec(uint8_t* cmd){
+    uint8_t cmd_read[999];
+    
     return 0;
 }
 

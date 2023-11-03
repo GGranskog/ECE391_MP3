@@ -24,6 +24,18 @@ typedef struct fda_table{
     uint32_t flags;
 }fda_table_t;
 
+typedef struct pcb{
+    fda_table_t[8] fda_arr;
+    uint32_t esp0;
+    uint16_t ss0;
+    uint32_t esp;
+    uint32_t flags;
+    uint32_t saved_file;
+    uint32_t parent;
+    uint32_t child;
+
+}pcb;
+
 // fop_table_t open_fop;
 // fop_table_t close_fop;
 // fop_table_t read_fop;
