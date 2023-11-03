@@ -229,7 +229,30 @@ int32_t sys_open(const uint8_t* fname){
  * SIDE AFFECTS: closes the file that was read/written
  */
 int32_t sys_close(int32_t fd){
+
+    if (fd < 2){   //start of file idx
+
+        return -1;
+    }
+
+    if (fd > 7){   //max file idx - 1
+
+    return -1;
+        
+    }  
+
+    if (pcb->fda[fd].eflags == 0){
+        return -1;
+    }
+
+    pcb->fda[fd].inode = 0;
+    pcb->fda[fd].file_pos = 0;
+    pcb->fda[fd].eflags = 1;
+    pcb->fda[fd].fop_table_ptr = &null;
+    pcb->fda[fd].fop_table_ptr->close(fd);
+
     return 0;
+
 }
 
 

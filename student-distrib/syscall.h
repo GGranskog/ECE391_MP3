@@ -59,6 +59,7 @@ fop_table_t rtc_fop;
 fop_table_t dir_fop;
 fop_table_t file_fop;
 fop_table_t terminal_fop;
+fop_table_t null;
 
 
 
