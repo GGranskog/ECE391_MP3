@@ -72,3 +72,6 @@ when trying to read the file system and compare names a page fault would be thro
 Solution had a null check and length check for nema of the files when comapring
 
 
+CHECKPOINT 3:
+
+Fixed previous dual input keyboard bug by adding assembly linkage
