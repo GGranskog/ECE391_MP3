@@ -1,32 +1,39 @@
 #define ASM     1
 
+.data
+jump_table:
+    .long 0x0, sys_execute, sys_halt, sys_read, sys_write, sys_open, sys_close
+
 .text
 .globl sys_call
 
 sys_call:
-    pushl  %ebx
-    movl    0x08(%esp), %ebx
-    movl    $0x05, %eax
-    int     $0x80
-    cmpl    $0xFFFFF001,  %eax
-    jb      done
-    xorl    %eax, %edx
-    subl    %eax, %edx
-    pushl   %edx
-    call    __errno_location
-    popl    %ecx
-    movl    %ecx, (%eax)
-    orl     $0xFFFFFFFF, %eax
+    pushfl
+    pushl %ebp    
+    pushl %edi
+    pushl %esi
+    pushl %edx    
+    pushl %ecx
+    pushl %ebx  
+
+    cmpl    0x1, %eax
+    jb      ERR
+    cmpl    0x6, %eax // make sure to change for when we add in the rest of the syscalls 
+    ja      ERR
+
+    call    *jump_table(,%eax, 4)
 
 done:
-    popl   %ebx
-    ret
+    popl    %ebx
+    popl    %ecx
+    popl    %edx
+    popl    %esi
+    popl    %edi
+    popl    %ebp
+    popfl
+    iret
 
-__errno_location:
-    call    getIP
-raddr:
-    addl    $errno-raadr, %eax
-    ret
-getIP:
-    movl    (%esp), %eax
-    ret
+ERR:    // out of index sys_call
+    movl    $-1, %eax
+    jmp     done
+

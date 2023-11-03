@@ -12,13 +12,13 @@
 
 
 
-int32_t exec(uint8_t* cmd);
-int32_t halt(uint8_t status);
+int32_t sys_exec(uint8_t* cmd);
+int32_t sys_halt(uint8_t status);
 
-int32_t open(const uint8_t* fname);
-int32_t close(int32_t fd);
-int32_t read(int32_t fd, const void* buf, int32_t nbytes);
-int32_t write(int32_t fd, const void* buf, int32_t nbytes);
+int32_t sys_open(const uint8_t* fname);
+int32_t sys_close(int32_t fd);
+int32_t sys_read(int32_t fd, const void* buf, int32_t nbytes);
+int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes);
 
 
 #endif
