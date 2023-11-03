@@ -25,6 +25,10 @@ int32_t sys_exec(uint8_t* cmd){
 
     uint8_t file_cmd[STR_LEN];  // filesys for cmd
     uint8_t file_arg[STR_LEN];  // filesys for arg
+
+    uint8_t buf_check[4] = {
+        0x7f, 0x45, 0x4c, 0x46              // buf for checking for magic numbers
+    };
     
     uint8_t  elf;
     uint32_t eip;
@@ -61,7 +65,23 @@ int32_t sys_exec(uint8_t* cmd){
     }
     
     /* ---------------check for executables--------------- */
-    
+    if (read_dentry_by_name((uint8_t*) fname, &dentry) == -1){
+        return -1;
+    }
+
+    if (read_data(dentry.inode_num, 0, buf, 4 ) == -1){   //4 for four byte
+        return -1;
+    }
+
+    for(i = 0, i < 4; i++){
+
+        if(buf[i] != buf_check[i]){
+            return -1;
+        }
+    }
+
+    read_data(dentry.inode_num, 24, buf, 4);       //24 for the offset of the entry
+    eip = *((uint32_t * ) buf);
 
     /* ---------------set up paging--------------- */
 
