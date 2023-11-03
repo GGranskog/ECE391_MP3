@@ -13,14 +13,14 @@
 
 #define TASK_SIZE   0x2000  // 8kB  PCB size
 #define PAGE_SIZE   0x0400000 // 4MB page size
-#define KER_ADDR    0x0800000  // kernel page starts addr 128MB
+#define KER_ADDR    0x0800000  // kernel page starts addr 8MB
 
 #define MAG_EXEC_0  0x7f
 #define MAG_EXEC_1  0x45
 #define MAG_EXEC_2  0x4c
 #define MAG_EXEC_3  0x46
 
-#define VIRT_ADDR 0x08048000 //virtual address
+#define VIRT_ADDR VIRTUAL //virtual address
 
 typedef struct fop_table{
     int32_t (*sys_open)(const uint8_t* fname);
@@ -53,7 +53,7 @@ typedef struct pcb{
     uint32_t parent_process;
     uint32_t cur_process;
 
-}pcb;
+}pcb_t;
 
 fop_table_t rtc_fop;
 fop_table_t dir_fop;

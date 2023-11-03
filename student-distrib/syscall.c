@@ -1,7 +1,9 @@
 #include "syscall.h"
 
 
-
+int pid_stat[6] = {0,0,0,0,0,0};
+int parent  = 0;
+int cur_pid = 0;
 
 /*
  * Exec
@@ -26,7 +28,7 @@ int32_t sys_exec(uint8_t* cmd){
     uint8_t file_cmd[STR_LEN];  // filesys for cmd
     uint8_t file_arg[STR_LEN];  // filesys for arg
     
-    uint8_t  elf;
+    uint8_t  elf[4];
     uint32_t eip;
     uint32_t esp;
     uint32_t ebp;
@@ -59,15 +61,53 @@ int32_t sys_exec(uint8_t* cmd){
             break;
         }
     }
-    
-    /* ---------------check for executables--------------- */
-    
+    /* ---------------check for executables/check validity--------------- */
+    // check if file does not exist
+    if(read_dentry_by_name(file_cmd, &dentry)==-1){
+        return -1;
+    }
+
+    // check that nothing fails during read_data
+    if(read_data(dentry.inode_num, 0, elf, 4) == -1){
+        return -1;
+    }
+
+    // Validate ELF as an EXECUTABLE
+    if(!(elf[0] == MAG_EXEC_0 && elf[1] == MAG_EXEC_1 &&
+         elf[2] == MAG_EXEC_2 && elf[3] == MAG_EXEC_3)) {
+        return -1; 
+    }    
 
     /* ---------------set up paging--------------- */
+    pcb_t* pcb;
+    int temp_pid = 0;
+    
+    for(i = 0; i < 6 ;i++){         /* find available pid, max 3 for now */
+        if(pid_stat[i] == 0){
+            pid_stat[i] = 1;
+            cur_pid = i;                  /* set cur_pid to new one*/
+            temp_pid =1;    
+            break;
+        }
+    }
+    if(temp_pid == 0){
+        return -1;
+    }
 
+    // enable paging
+    uint32_t addr = START_KERNEL * pid + KER_ADDR;
+    page_dir[32] = addr|PS|US|RW|P;
 
+    // flush the TLB
+    asm volatile(
+        "movl %%cr3,%%eax     ;"
+        "movl %%eax,%%cr3     ;"
+
+        : : : "eax", "cc" 
+    );
+    
     /* ---------------load files to mem--------------- */
-
+    
 
     /* ---------------create PCB--------------- */
 
