@@ -9,6 +9,18 @@
 #include "idt.h"
 #include "types.h"
 #include "filesys.h"
+#include "paging.h"
+
+#define TASK_SIZE   0x2000  // 8kB  PCB size
+#define PAGE_SIZE   0x0400000 // 4MB page size
+#define KER_ADDR    0x0800000  // kernel page starts addr 128MB
+
+#define MAG_EXEC_0  0x7f
+#define MAG_EXEC_1  0x45
+#define MAG_EXEC_2  0x4c
+#define MAG_EXEC_3  0x46
+
+#define VIRT_ADDR 0x08048000 //virtual address
 
 typedef struct fop_table{
     int32_t (*sys_open)(const uint8_t* fname);
@@ -17,29 +29,35 @@ typedef struct fop_table{
     int32_t (*sys_write)(int32_t fd, const void* buf, int32_t nbytes);
 }fop_table_t;
 
-typedef struct fda_table{
+typedef struct fd_table{
     fop_table_t* fop_table_ptr;
     uint32_t inode;
     uint32_t file_pos;
     uint32_t flags;
-}fda_table_t;
+}fd_table_t;
 
 typedef struct pcb{
-    fda_table_t[8] fda_arr;
+    fd_table_t fda[8];
+    uint8_t cmd[128];
+    uint8_t arg[128];
     uint32_t esp0;
     uint16_t ss0;
+    uint32_t ebp;
     uint32_t esp;
-    uint32_t flags;
+    uint32_t ss;
+    uint32_t eip;
+    uint32_t eflags;
+    uint32_t cs;
     uint32_t saved_file;
-    uint32_t parent;
-    uint32_t child;
+    uint32_t parent_process;
+    uint32_t cur_process;
 
 }pcb;
 
-// fop_table_t open_fop;
-// fop_table_t close_fop;
-// fop_table_t read_fop;
-// fop_table_t write_fop;
+fop_table_t rtc_fop;
+fop_table_t dir_fop;
+fop_table_t file_fop;
+fop_table_t terminal_fop;
 
 
 

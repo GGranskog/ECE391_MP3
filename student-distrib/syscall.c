@@ -12,8 +12,40 @@
  * SIDE AFFECTS: executes command
  */
 int32_t sys_exec(uint8_t* cmd){
-    uint8_t cmd_read[999];
+    /* ---------------define function parameters--------------- */
+    int i;              // loop var
+    int cmd_start = 0;  // start of cmd 
+    int arg_start = 0;  // start of arg
+    int str_len = strlen((const uint8_t*)cmd);
+    dentry_t dentry;
+
+
+    /* ---------------parse the args--------------- */
+
+
+    /* ---------------check for executables--------------- */
     
+
+    /* ---------------set up paging--------------- */
+
+
+    /* ---------------load files to mem--------------- */
+
+
+    /* ---------------create PCB--------------- */
+
+
+    /* ---------------prep for context switch--------------- */
+
+
+    /* ---------------push IRET context to kernel--------------- */
+
+
+    /* ---------------IRET--------------- */
+
+
+    /* ---------------return--------------- */
+
     return 0;
 }
 

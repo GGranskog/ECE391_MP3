@@ -13,6 +13,8 @@
 #include "rtc.h"
 #include "keyboard.h"
 #include "filesys.h"
+#include "syscall.h"
+#include "sys_asm.h"
 
 #define RUN_TESTS
 
@@ -170,7 +172,7 @@ void entry(unsigned long magic, unsigned long addr) {
     //while(1);
 #endif
     /* Execute the first program ("shell") ... */
-
+    sys_exec((const uint8_t*)"shell");
     /* Spin (nicely, so we don't chew up cycles) */
     asm volatile (".1: hlt; jmp .1;");
 }
