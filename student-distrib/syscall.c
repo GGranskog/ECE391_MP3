@@ -19,9 +19,25 @@ int32_t sys_exec(uint8_t* cmd){
     int str_len = strlen((const uint8_t*)cmd);
     dentry_t dentry;
 
+    int file_cmd_length = 0;
+    int file_arg_length = 0;
+
+    uint8_t file_cmd[128];
+    uint8_t file_arg[128];
+    
+    uint8_t elf_buf[sizeof(int32_t)];
+
+    //Arguments for switching to user context.
+    uint32_t eip_arg;
+    uint32_t esp_arg;
 
     /* ---------------parse the args--------------- */
-
+    for (i=0; i<128; i++){
+        file_cmd[i] = '\0';
+        file_arg[i] = '\0';
+    }
+    if (str_len == 0){return -1;}
+    
 
     /* ---------------check for executables--------------- */
     
