@@ -3,9 +3,7 @@
 
 #include "filesys.h"
 #include "syscall.h"
-#ifdef ASM
 
 extern void sys_call();
 
-#endif
 #endif
