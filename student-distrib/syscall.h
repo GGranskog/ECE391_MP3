@@ -8,8 +8,10 @@
 #include "tests.h"
 #include "idt.h"
 #include "types.h"
-#include "filesys.h"
 #include "paging.h"
+#include "filesys.h"
+#include "keyboard.h"
+#include "rtc.h"
 
 #define TASK_SIZE   0x2000  // 8kB  PCB size
 #define PAGE_SIZE   0x0400000 // 4MB page size
@@ -37,21 +39,22 @@ typedef struct fd_table{
 }fd_table_t;
 
 typedef struct pcb{
-    fd_table_t fda[8];
-    uint8_t cmd[128];
-    uint8_t arg[128];
+    fd_table_t fda[8];      // file descriptor array
+    uint8_t cmd[128];       // command
+    uint8_t arg[128];       // arguments for the command
     uint32_t esp0;
     uint16_t ss0;
     uint32_t ebp;
     uint32_t esp;
     uint32_t ss;
     uint32_t eip;
-    uint32_t pid;
+    uint32_t pid;           // current process id
+    uint32_t parent_pid;// parent process id
     uint32_t eflags;
     uint32_t cs;
     uint32_t saved_file;
-    uint32_t parent_process;
-    uint32_t cur_process;
+
+    uint32_t sig;
 
 }pcb_t;
 
@@ -59,13 +62,13 @@ fop_table_t rtc_fop;
 fop_table_t dir_fop;
 fop_table_t file_fop;
 fop_table_t terminal_fop;
-
+fop_table_t null_fop;
 
 
 int32_t sys_exec(uint8_t* cmd);
 int32_t sys_halt(uint8_t status);
 
-int32_t sys_open(const uint8_t* fname);
+int32_t sys_open(const uint8_t* filename);
 int32_t sys_close(int32_t fd);
 int32_t sys_read(int32_t fd, const void* buf, int32_t nbytes);
 int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes);

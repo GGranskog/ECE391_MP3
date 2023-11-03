@@ -108,7 +108,7 @@ int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t lengt
  * RETURN: 0 for success, -1 for fail
  * SIDE AFFECTS: 
  */
-int32_t dir_open (const char* file_name){
+int32_t dir_open (const char* filename){
 
     dentry_index = 0;
     return -0;
@@ -213,10 +213,10 @@ int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
  * RETURN: 0 for success, -1 for fail
  * SIDE AFFECTS: 
  */
-int32_t file_open (const char* file_name){
+int32_t file_open (const char* filename){
 
     dentry_t dentry;            //temp dentry
-    uint32_t rdbi = read_dentry_by_name((uint8_t*) file_name, &dentry);    //call read dentry by name
+    uint32_t rdbi = read_dentry_by_name((uint8_t*) filename, &dentry);    //call read dentry by name
     if (rdbi != 0){                 // if not 0 that means no file
 
         return -1;          

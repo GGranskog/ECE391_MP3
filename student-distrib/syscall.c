@@ -1,9 +1,29 @@
 #include "syscall.h"
 
 
-int pid_stat[6] = {0,0,0,0,0,0};
-int parent  = 0;
-int cur_pid = 0;
+uint32_t pid_stat[6] = {0,0,0,0,0,0};
+uint32_t parent  = 0;
+uint32_t cur_pid = 0;
+
+void flush_tlb();
+
+// int32_t* terminal_fop = {0, 0, terminal_read, terminal_write};
+//int32_t* rtc_fop = {rtc_open, rtc_close, rtc_read, rtc_write};
+//int32_t* file_fop = {file_open, file_close, file_read, file_write};
+//int32_t* dir_fop = {dir_open, dir_close, dir_read, dir_write};
+//int32_t* null_fop = {null_open, null_close, null_read, null_write};
+
+int32_t null_read(int32_t fd, const void* buf, int32_t nbytes);
+int32_t null_read(int32_t fd, const void* buf, int32_t nbytes){return -1;}
+
+int32_t null_write(int32_t fd, const void* buf, int32_t nbytes);
+int32_t null_write(int32_t fd, const void* buf, int32_t nbytes){return -1;}
+
+int32_t null_open(const uint8_t* filename);
+int32_t null_open(const uint8_t* filename){return -1;}
+
+int32_t null_close(int32_t filename);
+int32_t null_close(int32_t filename){return -1;}
 
 /*
  * Exec
@@ -18,18 +38,18 @@ int32_t sys_exec(uint8_t* cmd){
     int i=0;            // loop var
     int cmd_str = 0;    // start of cmd 
     int arg_idx = 0;    // start of arg
-    int pid;            // process id
+    uint32_t pid;       // process id
     dentry_t dentry;
 
-    int cmd_len = strlen((int8_t*)cmd);
-    int file_cmd_len = 0; // length of cmd
-    int file_arg_len = 0; // length of arg
+    uint32_t cmd_len = strlen((int8_t*)cmd);
+    // int file_cmd_len = 0; // length of cmd
+    // int file_arg_len = 0; // length of arg
 
     uint8_t file_cmd[STR_LEN];  // filesys for cmd
     uint8_t file_arg[STR_LEN];  // filesys for arg
     
     uint8_t  elf[4];
-    uint32_t eip;
+    // uint32_t eip;
     uint32_t esp;
     uint32_t ebp;
 
@@ -79,7 +99,6 @@ int32_t sys_exec(uint8_t* cmd){
     }    
 
     /* ---------------set up paging--------------- */
-    pcb_t* pcb;
     int temp_pid = 0;
     
     for(i = 0; i < 6 ;i++){         /* find available pid, max 3 for now */
@@ -99,19 +118,42 @@ int32_t sys_exec(uint8_t* cmd){
     page_dir[32] = addr|PS|US|RW|P;
 
     // flush the TLB
-    asm volatile(
-        "movl %%cr3,%%eax     ;"
-        "movl %%eax,%%cr3     ;"
-
-        : : : "eax", "cc" 
-    );
+    flush_tlb();
     
     /* ---------------load files to mem--------------- */
-    
+    inode_t* temp_inode = (inode_t*)(node+dentry.inode_num);
+    uint8_t* image_addr = (uint8_t*)VIRT_ADDR;           //it should stay the same, overwriting existing program image
+    read_data(dentry.inode_num, 0, image_addr,temp_inode->length); 
 
     /* ---------------create PCB--------------- */
+    pcb_t* pcb = (pcb_t*)(LEVEL1 - IDX2*(cur_pid+1));
+    pcb->pid = cur_pid;
+	pcb->esp = esp;
+	pcb->ebp = ebp;
+	//store the prev_pid's esp0 and ss0
+	pcb->esp0 = tss.esp0;
+	pcb->ss0 = tss.ss0;
 
+    if(cur_pid != 0 ){
+        pcb->parent_pid = parent;
+        parent = cur_pid;
+    }else{
+        pcb->parent_pid = cur_pid;
+    }
 
+    for (i=0; i<8; i++){
+        pcb->fda[i].fop_table_ptr = &null_fop;
+        pcb->fda[i].inode = 0;
+        pcb->fda[i].file_pos = 0;
+        pcb->fda[i].flags = 0;
+    }
+
+    pcb->fda[0].fop_table_ptr = &terminal_fop;
+    pcb->fda[0].flags = 1;
+
+    pcb->fda[1].fop_table_ptr = &terminal_fop;
+    pcb->fda[1].flags = 1;
+    
     /* ---------------prep for context switch--------------- */
 
 
@@ -194,3 +236,15 @@ int32_t sys_read(int32_t fd, const void* buf, int32_t nbytes){
 int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
     return 0;
 }
+
+
+
+void flush_tlb(){
+    asm volatile(
+        "movl %%cr3,%%eax     ;"
+        "movl %%eax,%%cr3     ;"
+
+        : : : "eax", "cc" 
+    );
+}
+
