@@ -2,6 +2,8 @@
 #include "rtc.h"
 #include "keyboard.h"
 #include "devices.h"
+#include "syscall.h"
+#include "sys_asm.h"
 
 
 /* void init_idt() 

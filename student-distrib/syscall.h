@@ -46,6 +46,7 @@ typedef struct pcb{
     uint32_t esp;
     uint32_t ss;
     uint32_t eip;
+    uint32_t pid;
     uint32_t eflags;
     uint32_t cs;
     uint32_t saved_file;

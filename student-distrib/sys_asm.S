@@ -2,7 +2,7 @@
 
 .data
 jump_table:
-    .long 0x0, sys_execute, sys_halt, sys_read, sys_write, sys_open, sys_close
+    .long 0x0, sys_exec, sys_halt, sys_read, sys_write, sys_open, sys_close
 
 .text
 .globl sys_call
@@ -21,7 +21,7 @@ sys_call:
     cmpl    0x6, %eax // make sure to change for when we add in the rest of the syscalls 
     ja      ERR
 
-    call    *jump_table(0 ,%eax, 4)
+    call    *jump_table(,%eax, 4)
 
 done:
     popl    %ebx

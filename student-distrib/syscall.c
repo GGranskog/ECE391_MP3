@@ -13,32 +13,53 @@
  */
 int32_t sys_exec(uint8_t* cmd){
     /* ---------------define function parameters--------------- */
-    int i;              // loop var
-    int cmd_start = 0;  // start of cmd 
-    int arg_start = 0;  // start of arg
-    int str_len = strlen((const uint8_t*)cmd);
+    int i=0;            // loop var
+    int cmd_str = 0;    // start of cmd 
+    int arg_idx = 0;    // start of arg
+    int pid;            // process id
     dentry_t dentry;
 
-    int file_cmd_length = 0;
-    int file_arg_length = 0;
+    int cmd_len = strlen((int8_t*)cmd);
+    int file_cmd_len = 0; // length of cmd
+    int file_arg_len = 0; // length of arg
 
-    uint8_t file_cmd[128];
-    uint8_t file_arg[128];
+    uint8_t file_cmd[STR_LEN];  // filesys for cmd
+    uint8_t file_arg[STR_LEN];  // filesys for arg
     
-    uint8_t elf_buf[sizeof(int32_t)];
-
-    //Arguments for switching to user context.
-    uint32_t eip_arg;
-    uint32_t esp_arg;
+    uint8_t  elf;
+    uint32_t eip;
+    uint32_t esp;
+    uint32_t ebp;
 
     /* ---------------parse the args--------------- */
-    for (i=0; i<128; i++){
+    for (i=0; i<STR_LEN; i++){
         file_cmd[i] = '\0';
         file_arg[i] = '\0';
     }
-    if (str_len == 0){return -1;}
-    
+    if (cmd_len == 0){return -1;} // validate that something was typed
 
+    for (i=0; i< cmd_len; i++){ // parsing cmd
+        if (cmd[i] != ' '){ // cmd should be the first word, everything else should be an arg to the cmd
+            file_cmd[i] = cmd[i];
+            cmd_str++;
+            // arg_str++;
+        }else{
+            file_cmd[i] = NULL;
+            break;
+        }
+    }    
+    for (i=cmd_str+1; i< cmd_len; i++){
+        if (cmd[i] != ' '){
+            for (arg_idx=cmd_str; arg_idx<cmd_len; arg_idx++){
+                file_arg[arg_idx] = cmd[arg_idx];
+            }
+            break;
+        }else{
+            file_arg[arg_idx] = NULL;
+            break;
+        }
+    }
+    
     /* ---------------check for executables--------------- */
     
 

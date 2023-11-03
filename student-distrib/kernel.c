@@ -172,7 +172,7 @@ void entry(unsigned long magic, unsigned long addr) {
     //while(1);
 #endif
     /* Execute the first program ("shell") ... */
-    sys_exec((const uint8_t*)"shell");
+    // sys_exec((const uint8_t*)"shell");
     /* Spin (nicely, so we don't chew up cycles) */
     asm volatile (".1: hlt; jmp .1;");
 }
