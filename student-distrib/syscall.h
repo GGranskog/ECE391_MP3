@@ -65,6 +65,7 @@ fop_table_t terminal_fop;
 fop_table_t null_fop;
 
 
+
 int32_t sys_exec(uint8_t* cmd);
 int32_t sys_halt(uint8_t status);
 

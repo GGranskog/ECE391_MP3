@@ -191,7 +191,74 @@ int32_t sys_halt(uint8_t status){
  * SIDE AFFECTS: opens the file for reading/writing
  */
 int32_t sys_open(const uint8_t* fname){
-    return 0;
+    pcb_t* pcb;
+    dentry_t dentry_obj;
+    int rdbn = read_dentry_by_name(fname, &dentry_obj);
+    int fd;
+
+    if(rdbn != 0){
+
+        return -1;
+
+    }
+
+    if(dentry_obj.ftype == 0){
+
+        for(fd = 2; fd < 8; fd++){
+
+            if(!(pcb->fda[fd].flags)){
+
+                pcb->fda[fd].inode = dentry_obj.inode_num;
+                pcb->fda[fd].file_pos = 0;
+                pcb->fda[fd].inode = dentry_obj.inode_num;
+                pcb->fda[fd].flags = 1;
+                pcb->fda[fd].fop_table_ptr = &rtc_fop;
+                //pcb->fda[fd].ftype = 0;
+                return fd;
+
+            }
+        }
+
+    }
+
+    if(dentry_obj.ftype == 1){
+
+        for(fd = 2; fd < 8; fd++){
+
+            if(!(pcb->fda[fd].flags)){
+
+                pcb->fda[fd].inode = dentry_obj.inode_num;
+                pcb->fda[fd].file_pos = 0;
+                pcb->fda[fd].inode = dentry_obj.inode_num;
+                pcb->fda[fd].flags = 1;
+                pcb->fda[fd].fop_table_ptr = &dir_fop;
+                //pcb->fda[fd].ftype = 1;
+                return fd;
+
+            }
+        }
+
+    }
+
+    if(dentry_obj.ftype == 2){
+
+        for(fd = 2; fd < 8; fd++){
+
+            if(!(pcb->fda[fd].flags)){
+
+                pcb->fda[fd].inode = dentry_obj.inode_num;
+                pcb->fda[fd].file_pos = 0;
+                pcb->fda[fd].inode = dentry_obj.inode_num;
+                pcb->fda[fd].flags = 1;
+                pcb->fda[fd].fop_table_ptr = &file_fop;
+                // pcb->fda[fd].ftype = 2;
+                return fd;
+
+            }
+        }
+
+    }
+    return -1;
 }
 
 
@@ -204,7 +271,30 @@ int32_t sys_open(const uint8_t* fname){
  * SIDE AFFECTS: closes the file that was read/written
  */
 int32_t sys_close(int32_t fd){
+    pcb_t* pcb;
+    if (fd < 2){   //start of file idx
+
+        return -1;
+    }
+
+    if (fd > 7){   //max file idx - 1
+
+    return -1;
+        
+    }  
+
+    if (pcb->fda[fd].flags == 0){
+        return -1;
+    }
+
+    pcb->fda[fd].inode = 0;
+    pcb->fda[fd].file_pos = 0;
+    pcb->fda[fd].flags = 1;
+    pcb->fda[fd].fop_table_ptr = &null_fop;
+    //pcb->fda[fd].fop_table_ptr.close(fd);
+
     return 0;
+
 }
 
 
