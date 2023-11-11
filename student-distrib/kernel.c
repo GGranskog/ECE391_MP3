@@ -149,7 +149,7 @@ void entry(unsigned long magic, unsigned long addr) {
     rtc_init();
     module_t* m = (module_t*)mbi->mods_addr;
     init_file_sys(m->mod_start);
-
+    fop_init();
     init_page();
     //clear();
     keyboard_init();

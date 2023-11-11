@@ -7,14 +7,14 @@ uint32_t cur_pid = 0;
 
 void flush_tlb();
 
-// int32_t* terminal_fop = {0, 0, terminal_read, terminal_write};
-//int32_t* rtc_fop = {rtc_open, rtc_close, rtc_read, rtc_write};
-//int32_t* file_fop = {file_open, file_close, file_read, file_write};
-//int32_t* dir_fop = {dir_open, dir_close, dir_read, dir_write};
-//int32_t* null_fop = {null_open, null_close, null_read, null_write};
+// terminal_fop = {terminal_open, terminal_close, terminal_read, terminal_write};
+// rtc_fop = {rtc_open, rtc_close, rtc_read, rtc_write};
+// file_fop = {file_open, file_close, file_read, file_write};
+// dir_fop = {dir_open, dir_close, dir_read, dir_write};
+// null_fop = {null_open, null_close, null_read, null_write};
 
-int32_t null_read(int32_t fd, const void* buf, int32_t nbytes);
-int32_t null_read(int32_t fd, const void* buf, int32_t nbytes){return -1;}
+int32_t null_read(int32_t fd, void* buf, int32_t nbytes);
+int32_t null_read(int32_t fd, void* buf, int32_t nbytes){return -1;}
 
 int32_t null_write(int32_t fd, const void* buf, int32_t nbytes);
 int32_t null_write(int32_t fd, const void* buf, int32_t nbytes){return -1;}
@@ -24,6 +24,35 @@ int32_t null_open(const uint8_t* filename){return -1;}
 
 int32_t null_close(int32_t filename);
 int32_t null_close(int32_t filename){return -1;}
+
+
+
+void fop_init(){
+    terminal_fop.sys_close  = terminal_close;
+    terminal_fop.sys_open   = terminal_open;
+    terminal_fop.sys_read   = terminal_read;
+    terminal_fop.sys_write  = terminal_write;
+
+    rtc_fop.sys_close   = rtc_close;
+    rtc_fop.sys_open    = rtc_open;
+    rtc_fop.sys_read    = rtc_read;
+    rtc_fop.sys_write   = rtc_write;
+
+    file_fop.sys_close  = file_close;
+    file_fop.sys_open   = file_open;
+    file_fop.sys_read   = file_read;
+    file_fop.sys_write  = file_write;
+
+    dir_fop.sys_close   = dir_close;
+    dir_fop.sys_open    = dir_open;
+    dir_fop.sys_read    = dir_read;
+    dir_fop.sys_write   = dir_write;
+
+    null_fop.sys_close  = null_close;
+    null_fop.sys_open   = null_open;
+    null_fop.sys_read   = null_read;
+    null_fop.sys_write  = null_write;
+}
 
 /*
  * Exec
