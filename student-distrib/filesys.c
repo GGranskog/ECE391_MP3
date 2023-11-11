@@ -108,7 +108,7 @@ int32_t read_data (uint32_t inode, uint32_t offset, uint8_t* buf, uint32_t lengt
  * RETURN: 0 for success, -1 for fail
  * SIDE AFFECTS: 
  */
-int32_t dir_open (const char* filename){
+int32_t dir_open (const uint8_t* filename){
 
     dentry_index = 0;
     return -0;
@@ -141,7 +141,7 @@ int32_t dir_close (int32_t fd){
  * RETURN: length of file
  * SIDE AFFECTS: 
  */
-int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
+int32_t dir_read (int32_t fd, void* buf, int32_t nbytes){
 
     if (dentry_index == -1){                //if index is -1 then file is not open
 
@@ -166,12 +166,12 @@ int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
     char buf_string[STR_LEN];               
     int idx, i;                             //index loops
 
-    if (dir_length < length){
+    if (dir_length < nbytes){
         dir_length = STR_LEN;           //  make sure within bounds 
     }
     else{
 
-        dir_length = length;
+        dir_length = nbytes;
 
     }
 
@@ -198,7 +198,7 @@ int32_t dir_read (int32_t fd, uint8_t* buf, uint32_t length){
  * RETURN: -1
  * SIDE AFFECTS: 
  */
-int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
+int32_t dir_write (int32_t fd, const void* buf, int32_t nbytes){
 
     return -1;
 
@@ -213,7 +213,7 @@ int32_t dir_write (int32_t fd, uint8_t* buf, uint32_t length){
  * RETURN: 0 for success, -1 for fail
  * SIDE AFFECTS: 
  */
-int32_t file_open (const char* filename){
+int32_t file_open (const uint8_t* filename){
 
     dentry_t dentry;            //temp dentry
     uint32_t rdbi = read_dentry_by_name((uint8_t*) filename, &dentry);    //call read dentry by name
@@ -261,14 +261,14 @@ int32_t file_close (int32_t fd){
  * RETURN: length of file read
  * SIDE AFFECTS: 
  */
-int32_t file_read (int32_t inode_count, uint32_t offset, uint8_t* buf, uint32_t length){
+int32_t file_read (int32_t inode_count, void* buf, int32_t nbytes){
 
     if (buf == NULL){
 
         return -1;
 
     }
-    return read_data(inode_count, offset, buf, length);         
+    return read_data(inode_count, 0, buf, nbytes);         
 
 }
 
@@ -281,7 +281,7 @@ int32_t file_read (int32_t inode_count, uint32_t offset, uint8_t* buf, uint32_t 
  * RETURN: -1
  * SIDE AFFECTS: 
  */
-int32_t file_write (int32_t fd, uint8_t* buf, uint32_t length){
+int32_t file_write (int32_t fd, const void* buf, int32_t nbytes){
 
     return -1;
 

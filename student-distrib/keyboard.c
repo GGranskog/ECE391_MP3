@@ -342,4 +342,26 @@ int32_t terminal_write(int32_t fd, const void* input_buf, int32_t nbytes) {
     return count;
 }
 
+/* 
+ *  terminal_open(const uint8_t fname)
+ *  DESCRIPTION: open the terminal
+ *  INPUTS: const uint8_t* fname, the filename
+ *  OUTPUTS: NONE
+ *  RETURN VALUE: returns 0
+ */
+int32_t terminal_open (const uint8_t* fname){
+    return 0;
+}
+
+/* 
+ *  terminal_close(int32_t fd)
+ *  DESCRIPTION: closes the 
+ *                 
+ *  INPUTS: int32_t fd, the input file descriptor
+ *  OUTPUTS: NONE
+ *  RETURN VALUE: returns 0
+ */
+int32_t terminal_close (int32_t fd){
+    return 0;
+}
 

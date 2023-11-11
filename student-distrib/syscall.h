@@ -25,9 +25,9 @@
 #define VIRT_ADDR VIRTUAL //virtual address
 
 typedef struct fop_table{
-    int32_t (*sys_open)(const uint8_t* fname);
+    int32_t (*sys_open)(const uint8_t* filename);
     int32_t (*sys_close)(int32_t fd);
-    int32_t (*sys_read)(int32_t fd, const void* buf, int32_t nbytes);
+    int32_t (*sys_read)(int32_t fd, void* buf, int32_t nbytes);
     int32_t (*sys_write)(int32_t fd, const void* buf, int32_t nbytes);
 }fop_table_t;
 
@@ -64,6 +64,7 @@ fop_table_t file_fop;
 fop_table_t terminal_fop;
 fop_table_t null_fop;
 
+void fop_init();
 
 
 int32_t sys_exec(uint8_t* cmd);
