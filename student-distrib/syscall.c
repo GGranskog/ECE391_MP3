@@ -1,9 +1,15 @@
 #include "syscall.h"
 
 
+
+#define FILE_ARRAY_SIZE 8
+#define USER_SPACE_START  0x8000000
+#define USER_SPACE_END    0x8400000
+
 uint32_t pid_stat[6] = {0,0,0,0,0,0};
 uint32_t parent  = 0;
 uint32_t cur_pid = 0;
+
 
 void flush_tlb();
 
@@ -219,75 +225,122 @@ int32_t sys_halt(uint8_t status){
  * RETURN:  0
  * SIDE AFFECTS: opens the file for reading/writing
  */
-int32_t sys_open(const uint8_t* fname){
-    pcb_t* pcb;
-    dentry_t dentry_obj;
-    int rdbn = read_dentry_by_name(fname, &dentry_obj);
-    int fd;
+int32_t sys_open(const uint8_t* filename){
 
-    if(rdbn != 0){
 
-        return -1;
+    int fd=-1;
+    int i;
+    dentry_t cur_dentry;
 
+    /* if the filename is NULL fail */
+    if (filename == NULL){
+        printf("read NULL!");
+        return FAIL;
     }
-
-    if(dentry_obj.ftype == 0){
-
-        for(fd = 2; fd < 8; fd++){
-
-            if(!(pcb->fda[fd].flags)){
-
-                pcb->fda[fd].inode = dentry_obj.inode_num;
-                pcb->fda[fd].file_pos = 0;
-                pcb->fda[fd].inode = dentry_obj.inode_num;
-                pcb->fda[fd].flags = 1;
-                pcb->fda[fd].fop_table_ptr = &rtc_fop;
-                //pcb->fda[fd].ftype = 0;
-                return fd;
-
-            }
+    if( (int)filename < USER_SPACE_START || (int)filename > USER_SPACE_END -4 ){return FAIL;}
+    /* select the table that is not in use */
+    for(i = 0; i < FILE_ARRAY_SIZE; i++ ){
+        if(pcb->fda[i].flags == 0){
+            fd =i;
+            break;
         }
-
+    }
+    /* if all is in use, return fail*/
+    if(fd == -1){
+        printf("open too many files!");
+        return FAIL;
     }
 
-    if(dentry_obj.ftype == 1){
+    /*fail if not exist*/
+    if( -1 == read_dentry_by_name(filename,&cur_dentry) ){
+        printf("no such file");
+        return FAIL; 
+    };
 
-        for(fd = 2; fd < 8; fd++){
-
-            if(!(pcb->fda[fd].flags)){
-
-                pcb->fda[fd].inode = dentry_obj.inode_num;
-                pcb->fda[fd].file_pos = 0;
-                pcb->fda[fd].inode = dentry_obj.inode_num;
-                pcb->fda[fd].flags = 1;
-                pcb->fda[fd].fop_table_ptr = &dir_fop;
-                //pcb->fda[fd].ftype = 1;
-                return fd;
-
-            }
-        }
-
+    /* set up entry value in corresponding fd */
+    //pcb->fda[fd].fop_table_ptr = &fop_table[cur_dentry.file_type];
+    pcb->fda[fd].file_pos = 0;
+    pcb->fda[fd].flags = 1;
+    /* if it is rtc, set it to -1 */
+    if (cur_dentry.ftype == 0){
+        pcb->fda[fd].inode = -1;
+    }else{pcb->fda[fd].inode = cur_dentry.inode_num;}
+    
+    /* if corresponding action fails, we shoudl fail too */
+    if(FAIL == pcb->fda[fd].fop_table_ptr->sys_open(filename)){
+        // file_array[fd].flags = 0;    
+        return FAIL;
     }
+    /* return fd for success */
+    return fd;
+    // pcb_t* pcb;
+    // dentry_t dentry_obj;
+    // int rdbn = read_dentry_by_name(fname, &dentry_obj);
+    // int fd;
 
-    if(dentry_obj.ftype == 2){
+    // if(rdbn != 0){
 
-        for(fd = 2; fd < 8; fd++){
+    //     return -1;
 
-            if(!(pcb->fda[fd].flags)){
+    // }
 
-                pcb->fda[fd].inode = dentry_obj.inode_num;
-                pcb->fda[fd].file_pos = 0;
-                pcb->fda[fd].inode = dentry_obj.inode_num;
-                pcb->fda[fd].flags = 1;
-                pcb->fda[fd].fop_table_ptr = &file_fop;
-                // pcb->fda[fd].ftype = 2;
-                return fd;
+    // if(dentry_obj.ftype == 0){
 
-            }
-        }
+    //     for(fd = 2; fd < 8; fd++){
 
-    }
-    return -1;
+    //         if(!(pcb->fda[fd].flags)){
+
+    //             pcb->fda[fd].inode = dentry_obj.inode_num;
+    //             pcb->fda[fd].file_pos = 0;
+    //             pcb->fda[fd].inode = dentry_obj.inode_num;
+    //             pcb->fda[fd].flags = 1;
+    //             pcb->fda[fd].fop_table_ptr = &rtc_fop;
+    //             //pcb->fda[fd].ftype = 0;
+    //             return fd;
+
+    //         }
+    //     }
+
+    // }
+
+    // if(dentry_obj.ftype == 1){
+
+    //     for(fd = 2; fd < 8; fd++){
+
+    //         if(!(pcb->fda[fd].flags)){
+
+    //             pcb->fda[fd].inode = dentry_obj.inode_num;
+    //             pcb->fda[fd].file_pos = 0;
+    //             pcb->fda[fd].inode = dentry_obj.inode_num;
+    //             pcb->fda[fd].flags = 1;
+    //             pcb->fda[fd].fop_table_ptr = &dir_fop;
+    //             //pcb->fda[fd].ftype = 1;
+    //             return fd;
+
+    //         }
+    //     }
+
+    // }
+
+    // if(dentry_obj.ftype == 2){
+
+    //     for(fd = 2; fd < 8; fd++){
+
+    //         if(!(pcb->fda[fd].flags)){
+
+    //             pcb->fda[fd].inode = dentry_obj.inode_num;
+    //             pcb->fda[fd].file_pos = 0;
+    //             pcb->fda[fd].inode = dentry_obj.inode_num;
+    //             pcb->fda[fd].flags = 1;
+    //             pcb->fda[fd].fop_table_ptr = &file_fop;
+    //             // pcb->fda[fd].ftype = 2;
+    //             return fd;
+
+    //         }
+    //     }
+
+    // }
+    // return -1;
 }
 
 
@@ -300,29 +353,39 @@ int32_t sys_open(const uint8_t* fname){
  * SIDE AFFECTS: closes the file that was read/written
  */
 int32_t sys_close(int32_t fd){
-    pcb_t* pcb;
-    if (fd < 2){   //start of file idx
 
-        return -1;
+ /* not valid idx, try to close default, or originally closed, fail */ 
+    if(fd <= 1 || fd>=FILE_ARRAY_SIZE || pcb->fda[fd].flags == 0){
+        return FAIL;
     }
+    /* close and call corresponding close */
+    pcb->fda[fd].flags = 0;
+    return pcb->fda[fd].fop_table_ptr->sys_close(fd);
 
-    if (fd > 7){   //max file idx - 1
 
-    return -1;
+    // pcb_t* pcb;
+    // if (fd < 2){   //start of file idx
+
+    //     return -1;
+    // }
+
+    // if (fd > 7){   //max file idx - 1
+
+    // return -1;
         
-    }  
+    // }  
 
-    if (pcb->fda[fd].flags == 0){
-        return -1;
-    }
+    // if (pcb->fda[fd].flags == 0){
+    //     return -1;
+    // }
 
-    pcb->fda[fd].inode = 0;
-    pcb->fda[fd].file_pos = 0;
-    pcb->fda[fd].flags = 1;
-    pcb->fda[fd].fop_table_ptr = &null_fop;
-    //pcb->fda[fd].fop_table_ptr.close(fd);
+    // pcb->fda[fd].inode = 0;
+    // pcb->fda[fd].file_pos = 0;
+    // pcb->fda[fd].flags = 1;
+    // pcb->fda[fd].fop_table_ptr = &null_fop;
+    // //pcb->fda[fd].fop_table_ptr.close(fd);
 
-    return 0;
+    // return 0;
 
 }
 
@@ -338,7 +401,19 @@ int32_t sys_close(int32_t fd){
  * SIDE AFFECTS: read a file
  */
 int32_t sys_read(int32_t fd, const void* buf, int32_t nbytes){
-    return 0;
+    int32_t ret;
+    /* judge whether the ptr is in user space */
+    if( (int)buf < USER_SPACE_START || (int)buf + nbytes > USER_SPACE_END -4 ){return -1;}
+    if (nbytes <= 0){return -1;}
+    if (fd < 0 || fd >= FILE_ARRAY_SIZE || fd == 1){return -1;}
+    if (!pcb->fda[fd].flags){return -1;} 
+    if (pcb->fda[fd].fop_table_ptr->sys_read == NULL){return -1;}
+
+
+
+    /* Call the corresponding read function base on the file type */
+    ret = (pcb->fda[fd].fop_table_ptr->sys_read)(fd,fda[fd].file_pos,buf,nbytes);
+    return ret;
 }
 
 
@@ -353,7 +428,15 @@ int32_t sys_read(int32_t fd, const void* buf, int32_t nbytes){
  * SIDE AFFECTS: write to a file
  */
 int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
-    return 0;
+    if (fd<=0 || fd >= FILE_ARRAY_SIZE){return -1;}
+    if (!pcb->fda[fd].flags || buf == NULL){return -1;}
+    if (pcb->fda[fd].fop_table_ptr->sys_write == NULL){return -1;}
+
+    /* judge whether the ptr is in user space */
+    if( (int)buf < USER_SPACE_START || (int)buf + nbytes > USER_SPACE_END -4 ){return -1;}
+
+    /* Call the corresponding write function base on the file type */
+    return ((pcb->fda[fd].fop_table_ptr->sys_write)(fd,buf,nbytes));
 }
 
 
