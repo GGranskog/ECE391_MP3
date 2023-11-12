@@ -27,6 +27,10 @@ void clear(void) {
     screen_y = 0;
 }
 
+/* void scroll();
+ * Inputs: void
+ * Return Value: none
+ * Function: scrolls the window when past the bottom*/
 void scroll() {
     int32_t set, temp;
     set = 0x20 | (ATTRIB<<8);
@@ -37,6 +41,10 @@ void scroll() {
     screen_y = NUM_ROWS-1;
 }
 
+/* void copyS(char* video_m);
+ * Inputs: char* video_m: on screen text saved for when scroll is active 
+ * Return Value: none
+ * Function: copies text when scrolling to be put on lone above and clear bottom row*/
 void copyS(char* video_m) {
     int32_t i,j;
     uint8_t temp;

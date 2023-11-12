@@ -5,6 +5,7 @@
 #define FILE_ARRAY_SIZE 8
 #define USER_SPACE_START  0x8000000
 #define USER_SPACE_END    0x8400000
+#define FAIL -1
 
 uint32_t pid_stat[6] = {0,0,0,0,0,0};
 uint32_t parent  = 0;
@@ -279,11 +280,14 @@ int32_t sys_open(const uint8_t* filename){
     int i;
     dentry_t cur_dentry;
 
+
     /* if the filename is NULL fail */
     if (filename == NULL){
         printf("read NULL!");
         return FAIL;
     }
+    
+    pcb_t* pcb = get_pcb();
     if( (int)filename < USER_SPACE_START || (int)filename > USER_SPACE_END -4 ){return FAIL;}
     /* select the table that is not in use */
     for(i = 0; i < FILE_ARRAY_SIZE; i++ ){
@@ -402,6 +406,7 @@ int32_t sys_open(const uint8_t* filename){
 int32_t sys_close(int32_t fd){
 
  /* not valid idx, try to close default, or originally closed, fail */ 
+    pcb_t* pcb = get_pcb();
     if(fd <= 1 || fd>=FILE_ARRAY_SIZE || pcb->fda[fd].flags == 0){
         return FAIL;
     }
@@ -447,9 +452,10 @@ int32_t sys_close(int32_t fd){
  * RETURN:  0
  * SIDE AFFECTS: read a file
  */
-int32_t sys_read(int32_t fd, const void* buf, int32_t nbytes){
+int32_t sys_read(int32_t fd, void* buf, int32_t nbytes){
     int32_t ret;
     /* judge whether the ptr is in user space */
+    pcb_t* pcb = get_pcb();
     if( (int)buf < USER_SPACE_START || (int)buf + nbytes > USER_SPACE_END -4 ){return -1;}
     if (nbytes <= 0){return -1;}
     if (fd < 0 || fd >= FILE_ARRAY_SIZE || fd == 1){return -1;}
@@ -459,7 +465,7 @@ int32_t sys_read(int32_t fd, const void* buf, int32_t nbytes){
 
 
     /* Call the corresponding read function base on the file type */
-    ret = (pcb->fda[fd].fop_table_ptr->sys_read)(fd,fda[fd].file_pos,buf,nbytes);
+    ret = (*(pcb->fda[fd].fop_table_ptr->sys_read))(fd,buf,nbytes);
     return ret;
 }
 
@@ -475,6 +481,7 @@ int32_t sys_read(int32_t fd, const void* buf, int32_t nbytes){
  * SIDE AFFECTS: write to a file
  */
 int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
+    pcb_t* pcb = get_pcb();
     if (fd<=0 || fd >= FILE_ARRAY_SIZE){return -1;}
     if (!pcb->fda[fd].flags || buf == NULL){return -1;}
     if (pcb->fda[fd].fop_table_ptr->sys_write == NULL){return -1;}

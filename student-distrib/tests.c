@@ -253,7 +253,7 @@ void launch_tests(){
 	// TEST_OUTPUT("deref_null", deref_null());
 	// TEST_OUTPUT("divide_by_zero", divide_by_zero());
 	//terminal_test(); 
-	rtc_test();
+	// rtc_test();
 	// TEST_OUTPUT("rtc_test", rtc_test());
 	// TEST_OUTPUT("frame1_read_test", frame1_read_test());
 	// TEST_OUTPUT("directory_read", directory_read());
