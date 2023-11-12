@@ -27,6 +27,31 @@ void clear(void) {
     screen_y = 0;
 }
 
+void scroll() {
+    int32_t set, temp;
+    set = 0x20 | (ATTRIB<<8);
+    temp = screen_y - NUM_ROWS+1;
+
+    copyS(video_mem);
+    memset_word(video_mem,set,0);
+    screen_y = NUM_ROWS-1;
+}
+
+void copyS(char* video_m) {
+    int32_t i,j;
+    uint8_t temp;
+    for (i = 0; i < NUM_COLS; i++) {
+        for(j = 0; j < NUM_ROWS - 1; j++) {
+            temp = *(uint8_t *)(video_m + ((NUM_COLS*(j+1) +i) << 1));
+            *(uint8_t *)(video_m + ((NUM_COLS*(j) +i) << 1)) = temp;
+            *(uint8_t *)(video_m + ((NUM_COLS*j +i) << 1) + 1) = ATTRIB;
+        }
+    }
+    for(i = 0; i < NUM_COLS; i++) {
+        *(uint8_t *)(video_m + ((NUM_COLS*(j) +i) << 1)) = ' ';
+    }
+}
+
 /* Standard printf().
  * Only supports the following format strings:
  * %%  - print a literal '%' character
@@ -200,12 +225,19 @@ void putc(uint8_t c) {
         outb(0x0E, 0x3D4);
         outb((uint8_t)((position >> 8) & 0xFF), 0x3D5);
         }
+screen_x--;
     }
 
 
-    if(c == '\n' || c == '\r') {
+    else if(c == '\n' || c == '\r') {
         screen_y++;
         screen_x = 0;
+if(screen_y >= NUM_ROWS) scroll();
+    } 
+    else if(screen_x == NUM_COLS-1){            // go to next row if going off screen
+        screen_x = 0;
+        screen_y++;
+        if(screen_y >= NUM_ROWS) scroll();
     } else {
         *(uint8_t *)(video_mem + ((NUM_COLS * screen_y + screen_x) << 1)) = c;
         *(uint8_t *)(video_mem + ((NUM_COLS * screen_y + screen_x) << 1) + 1) = ATTRIB;
