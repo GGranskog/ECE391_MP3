@@ -7,11 +7,6 @@ uint32_t cur_pid = 0;
 
 void flush_tlb();
 
-// terminal_fop = {terminal_open, terminal_close, terminal_read, terminal_write};
-// rtc_fop = {rtc_open, rtc_close, rtc_read, rtc_write};
-// file_fop = {file_open, file_close, file_read, file_write};
-// dir_fop = {dir_open, dir_close, dir_read, dir_write};
-// null_fop = {null_open, null_close, null_read, null_write};
 
 int32_t null_read(int32_t fd, void* buf, int32_t nbytes);
 int32_t null_read(int32_t fd, void* buf, int32_t nbytes){return -1;}
@@ -26,7 +21,7 @@ int32_t null_close(int32_t filename);
 int32_t null_close(int32_t filename){return -1;}
 
 
-
+// initialize all of the FOP tables for each of the drivers
 void fop_init(){
     terminal_fop.sys_close  = terminal_close;
     terminal_fop.sys_open   = terminal_open;
@@ -78,7 +73,7 @@ int32_t sys_exec(uint8_t* cmd){
     uint8_t file_arg[STR_LEN];  // filesys for arg
     
     uint8_t  elf[4];
-    // uint32_t eip;
+    uint32_t eip;
     uint32_t esp;
     uint32_t ebp;
 
@@ -155,7 +150,8 @@ int32_t sys_exec(uint8_t* cmd){
     read_data(dentry.inode_num, 0, image_addr,temp_inode->length); 
 
     /* ---------------create PCB--------------- */
-    pcb_t* pcb = (pcb_t*)(LEVEL1 - IDX2*(cur_pid+1));
+    pcb_t* pcb = get_pcb();
+    if (pcb == NULL){return -1;}
     pcb->pid = cur_pid;
 	pcb->esp = esp;
 	pcb->ebp = ebp;
@@ -184,16 +180,43 @@ int32_t sys_exec(uint8_t* cmd){
     pcb->fda[1].flags = 1;
     
     /* ---------------prep for context switch--------------- */
+    uint8_t eip_buf[4];
+    read_data(dentry.inode_num, 0, eip_buf, 4); 
+    eip = *((int*)eip_buf);
 
+    esp = LEVEL1 + PAGE_SIZE - 4;
+    pcb->eip = eip;
+    pcb->esp = esp;
+    tss.ss0 = KERNEL_DS;
+    tss.esp0 = KER_ADDR - (TASK_SIZE*pid) - 4;
+    pcb->esp0 = tss.esp0;
+
+    uint32_t ESP_asm, EBP_asm;
+    asm("\t movl %%esp, %0" : "=r"(ESP_asm));
+    asm("\t movl %%ebp, %0" : "=r"(EBP_asm));
+    pcb->task_ebp = EBP_asm;    
+    pcb->task_esp = ESP_asm;
+    sti();
 
     /* ---------------push IRET context to kernel--------------- */
-
-
-    /* ---------------IRET--------------- */
-
-
+    asm volatile ("\
+        andl    $0x00FF, %%ebx  ;\
+        movw    %%bx, %%ds      ;\
+        pushl   %%ebx           ;\
+        pushl   %%edx           ;\
+        pushfl                  ;\
+        popl    %%edx           ;\
+        orl     $0x0200, %%edx  ;\
+        pushl   %%edx           ;\
+        pushl   %%ecx           ;\
+        pushl   %%eax           ;\
+        iret                    ;\
+        "
+        :
+        : "a"(eip), "b"(USER_DS), "c"(USER_CS), "d"(esp)
+        : "memory"
+    );
     /* ---------------return--------------- */
-
     return 0;
 }
 
@@ -207,6 +230,30 @@ int32_t sys_exec(uint8_t* cmd){
  * SIDE AFFECTS: halts program when finished or error occurs
  */
 int32_t sys_halt(uint8_t status){
+    cli();
+    pcb_t* pcb = get_pcb();
+    if (pcb == NULL){return -1;}
+    int i;
+    for (i=0; i< 8; i++){
+        pcb->fda[i].file_pos = 0;
+        pcb->fda[i].flags = 0;
+        pcb->fda[i].fop_table_ptr = NULL;
+        pcb->fda[i].inode = -1;
+    }
+    pid_stat[pcb->pid] = 0;
+    if (pcb->pid <= 2){sys_exec((uint8_t*)"shell");}
+
+    int32_t esp, ebp;
+    esp = pcb->esp;
+    ebp = pcb->ebp;
+
+    uint32_t addr = (pcb->parent_pid*START_KERNEL)+KER_ADDR;
+    page_dir[32] = addr|PS|US|RW|P;
+    flush_tlb();
+    
+    tss.ss0 = KERNEL_DS;
+    tss.esp0 = KER_ADDR - (TASK_SIZE * pcb->parent_pid) - 4;
+
     return 0;
 }
 
@@ -356,6 +403,10 @@ int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
     return 0;
 }
 
+
+pcb_t* get_pcb(){
+    return (pcb_t*)(LEVEL1- TASK_SIZE*(cur_pid+1));
+}
 
 
 void flush_tlb(){

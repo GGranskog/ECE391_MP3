@@ -33,9 +33,9 @@ typedef struct fop_table{
 
 typedef struct fd_table{
     fop_table_t* fop_table_ptr;
-    uint32_t inode;
-    uint32_t file_pos;
-    uint32_t flags;
+    int32_t inode;
+    int32_t file_pos;
+    int32_t flags;
 }fd_table_t;
 
 typedef struct pcb{
@@ -46,6 +46,8 @@ typedef struct pcb{
     uint16_t ss0;
     uint32_t ebp;
     uint32_t esp;
+    uint32_t task_ebp;
+    uint32_t task_esp;
     uint32_t ss;
     uint32_t eip;
     uint32_t pid;           // current process id
@@ -65,7 +67,7 @@ fop_table_t terminal_fop;
 fop_table_t null_fop;
 
 void fop_init();
-
+pcb_t* get_pcb();
 
 int32_t sys_exec(uint8_t* cmd);
 int32_t sys_halt(uint8_t status);
