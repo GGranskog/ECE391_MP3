@@ -75,3 +75,8 @@ Solution had a null check and length check for nema of the files when comapring
 CHECKPOINT 3:
 
 Fixed previous dual input keyboard bug by adding assembly linkage
+
+CHECKPOINT 4:
+
+Fixed previous backspace keyboard issue and fixed wrapping/scrolling
+
