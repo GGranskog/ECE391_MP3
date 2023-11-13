@@ -169,10 +169,11 @@ void entry(unsigned long magic, unsigned long addr) {
     /* Run tests */
     launch_tests();
     
-    //while(1);
+    sys_exec((uint8_t *) "shell");
+    //while(1){};
 #endif
     /* Execute the first program ("shell") ... */
-    sys_exec((uint8_t *) "shell");
+
     /* Spin (nicely, so we don't chew up cycles) */
     asm volatile (".1: hlt; jmp .1;");
 }

@@ -48,15 +48,15 @@ typedef struct pcb{
     uint32_t esp;
     uint32_t task_ebp;
     uint32_t task_esp;
-    uint32_t ss;
+    // uint32_t ss;
     uint32_t eip;
     uint32_t pid;           // current process id
     uint32_t parent_pid;// parent process id
-    uint32_t eflags;
-    uint32_t cs;
-    uint32_t saved_file;
+    // uint32_t eflags;
+    // uint32_t cs;
+    // uint32_t saved_file;
 
-    uint32_t sig;
+    // uint32_t sig;
 
 }pcb_t;
 

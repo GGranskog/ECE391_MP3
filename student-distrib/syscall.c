@@ -5,6 +5,8 @@
 #define FILE_ARRAY_SIZE 8
 #define USER_SPACE_START  0x8000000
 #define USER_SPACE_END    0x8400000
+#define UESP  0x0083FFFFC // 128MB+4MB-4
+#define EFLAG 0x200
 #define FAIL -1
 
 uint32_t pid_stat[6] = {0,0,0,0,0,0};
@@ -119,15 +121,11 @@ int32_t sys_exec(uint8_t* cmd){
     }
 
     // check that nothing fails during read_data
-    if(read_data(dentry.inode_num, 0, elf, 4) == -1){
-        return -1;
-    }
+    if(read_data(dentry.inode_num, 0, elf, 4) == -1){return -1;}
 
     // Validate ELF as an EXECUTABLE
     if(!(elf[0] == MAG_EXEC_0 && elf[1] == MAG_EXEC_1 &&
-         elf[2] == MAG_EXEC_2 && elf[3] == MAG_EXEC_3)) {
-        return -1; 
-    }    
+         elf[2] == MAG_EXEC_2 && elf[3] == MAG_EXEC_3)) {return -1;}    
 
     /* ---------------set up paging--------------- */
     int temp_pid = 0;
@@ -140,7 +138,7 @@ int32_t sys_exec(uint8_t* cmd){
             break;
         }
     }
-    if(temp_pid == 0){
+    if(temp_pid == 0){ // pid is full
         return -1;
     }
 
@@ -177,25 +175,30 @@ int32_t sys_exec(uint8_t* cmd){
         pcb->fda[i].fop_table_ptr = &null_fop;
         pcb->fda[i].inode = 0;
         pcb->fda[i].file_pos = 0;
-        pcb->fda[i].flags = 0;
+        pcb->fda[i].flags = 1;
     }
 
     pcb->fda[0].fop_table_ptr = &terminal_fop;
-    pcb->fda[0].flags = 1;
+    pcb->fda[0].flags = 0;
+    pcb->fda[0].file_pos = 0;
+    pcb->fda[0].inode = 0;
 
     pcb->fda[1].fop_table_ptr = &terminal_fop;
-    pcb->fda[1].flags = 1;
-    
+    pcb->fda[1].flags = 0;
+    pcb->fda[1].file_pos = 0;
+    pcb->fda[1].inode = 0;
+    strncpy((int8_t*)pcb->arg, (int8_t*)(file_arg), STR_LEN);
+
     /* ---------------prep for context switch--------------- */
     uint8_t eip_buf[4];
-    read_data(dentry.inode_num, 0, eip_buf, 4); 
+    read_data(dentry.inode_num, 24, eip_buf, 4); 
     eip = *((int*)eip_buf);
 
-    esp = LEVEL1 + PAGE_SIZE - 4;
+    esp = ENTRY + PAGE_SIZE - 4;
     pcb->eip = eip;
     pcb->esp = esp;
     tss.ss0 = KERNEL_DS;
-    tss.esp0 = KER_ADDR - (TASK_SIZE*pid) - 4;
+    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid) - 4;
     pcb->esp0 = tss.esp0;
 
     uint32_t ESP_asm, EBP_asm;
@@ -206,23 +209,26 @@ int32_t sys_exec(uint8_t* cmd){
     sti();
 
     /* ---------------push IRET context to kernel--------------- */
-    asm volatile ("\
-        andl    $0x00FF, %%ebx  ;\
-        movw    %%bx, %%ds      ;\
-        pushl   %%ebx           ;\
-        pushl   %%edx           ;\
-        pushfl                  ;\
-        popl    %%edx           ;\
-        orl     $0x0200, %%edx  ;\
-        pushl   %%edx           ;\
-        pushl   %%ecx           ;\
-        pushl   %%eax           ;\
-        iret                    ;\
-        "
-        :
-        : "a"(eip), "b"(USER_DS), "c"(USER_CS), "d"(esp)
-        : "memory"
-    );
+    // push order:
+    // User_DS, ESP, EFlags, User_CS, EIP
+    asm volatile ("	cli					\n\
+				  movw %0, %%ax			\n\
+				  movw %%ax, %%ds 		\n\
+				  pushl %0				\n\
+				  pushl %1 				\n\
+				  pushfl				\n\
+				  popl %%eax 			\n\
+				  orl %2, %%eax 		\n\
+				  pushl %%eax			\n\
+				  pushl %3 				\n\
+				  pushl %4 				\n\
+                  "
+				:
+				: "i"(USER_DS), "r"(esp), "r"(EFLAG), "i"(USER_CS), "r"(eip)
+				: "eax", "memory"
+				); 
+    asm volatile ("iret");
+
     /* ---------------return--------------- */
     return 0;
 }
@@ -493,12 +499,25 @@ int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
     return ((pcb->fda[fd].fop_table_ptr->sys_write)(fd,buf,nbytes));
 }
 
-
+/*
+ * get_pcb
+ * DESCRIPTION: grabs the pcb for the current process
+ * INPUT:   NONE
+ * OUTPUT:  NONE
+ * RETURN:  returns pcb of current pid
+ */
 pcb_t* get_pcb(){
     return (pcb_t*)(LEVEL1- TASK_SIZE*(cur_pid+1));
 }
 
-
+/*
+ * flush_tlb
+ * DESCRIPTION: flufhes the tlb when change in address space
+ * INPUT:   none
+ * OUTPUT:  none
+ * RETURN:  0
+ * SIDE AFFECTS: flushes the tlb
+ */
 void flush_tlb(){
     asm volatile(
         "movl %%cr3,%%eax     ;"

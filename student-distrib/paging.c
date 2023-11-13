@@ -20,7 +20,7 @@ void init_page() {
         page_table[i] = 0;  // page table entry cleared for initialization
     }
     page_table[V_IDX] = V_VIRTUAL | RW | P;         // vid physcal to virtual, RW enabled, present
-    page_table[IDX1] = V_VIRTUAL | IDX1 | RW | P;   // page_dir[1], physical(i=1) ->virtual shifter
+    page_table[1000] = V_VIRTUAL | IDX1 | RW | P;   // page_dir[1], physical(i=1) ->virtual shifter
     //page_table[IDX2] = V_VIRTUAL | IDX2 | RW | P;
     //page_table[IDX3] = V_VIRTUAL | IDX3 | RW | P;
 
