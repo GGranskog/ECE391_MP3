@@ -227,32 +227,33 @@ void putc(uint8_t c) {
         }else{
             screen_x--;
             putc(' ');
+            
         uint16_t position = screen_y * NUM_COLS + screen_x;
         outb(0x0F, 0x3D4);
         outb((uint8_t)(position & 0xFF), 0x3D5);
         outb(0x0E, 0x3D4);
         outb((uint8_t)((position >> 8) & 0xFF), 0x3D5);
+        screen_x--;
         }
-screen_x--;
+        
     }
 
 
     else if(c == '\n' || c == '\r') {
         screen_y++;
         screen_x = 0;
-if(screen_y >= NUM_ROWS) scroll();
-    } 
-    else if(screen_x == NUM_COLS-1){            // go to next row if going off screen
-        screen_x = 0;
-        screen_y++;
         if(screen_y >= NUM_ROWS) scroll();
-    } else {
+    } 
+    else {
         *(uint8_t *)(video_mem + ((NUM_COLS * screen_y + screen_x) << 1)) = c;
         *(uint8_t *)(video_mem + ((NUM_COLS * screen_y + screen_x) << 1) + 1) = ATTRIB;
         screen_x++;
+        if(screen_x == NUM_COLS) screen_y++;
         screen_x %= NUM_COLS;
         screen_y = (screen_y + (screen_x / NUM_COLS)) % NUM_ROWS;
+        
     }
+    
 
     
 }
