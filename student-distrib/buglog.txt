@@ -80,6 +80,17 @@ bug 2:
 we keep page faulting in the iret line of our inline assembly of the execute syscall
 solution:   in out as linkage we had not put the $ symbol infront of out integer values to compare, 
             and set the dpl of our idt table properly for system calls
+time: 2 days
+
+bug 3:
+we had a general protection fault in our assembly linkage
+solution:   the order that we made and tore down the stack as well as an extra push onto the stack
+time: 10 minutes
+
+bug 4:
+we cant type to the shell after executing the first shell
+solution:   
+time: 
 
 CHECKPOINT 4:
 
