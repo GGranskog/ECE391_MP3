@@ -89,8 +89,8 @@ time: 10 minutes
 
 bug 4:
 we cant type to the shell after executing the first shell
-solution: added an interrupt in our terminal read to be able to type  
-time: 10 minutes
+solution:   
+time: 
 
 CHECKPOINT 4:
 
