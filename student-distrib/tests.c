@@ -188,8 +188,21 @@ int frame1_read_test(){
  */
 void rtc_test()
 {
-	rtc_open(0);
-	rtc_write(16, 0, 0);
+	uint32_t i;
+    uint32_t j;
+    int32_t retval = 0;
+
+    retval += rtc_open(NULL);
+	for(i = 2; i <= 1024; i*=2) {
+        retval += rtc_write(NULL, &i, sizeof(uint32_t));
+        printf("Testing: %d Hz\n", i);
+        for(j = 0; j < i; j++) {
+            retval += rtc_read(NULL, NULL, NULL);
+            printf("#");
+        }
+        printf("\n");
+    }
+	printf("retval = %d", retval);
 }
 
 /* exec_read_test

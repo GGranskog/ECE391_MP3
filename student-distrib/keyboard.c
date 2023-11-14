@@ -131,7 +131,7 @@ extern void keyboard_handler(void) {
         // Handle Backspace key
         if (num_char > 0) {
             putc(scan_to_ascii[scan_code][0]);
-            get_char(scan_to_ascii[scan_code][0]);
+            //get_char(scan_to_ascii[scan_code][0]);
             --num_char;
         }
     } else if ((l_shift_flag || r_shift_flag) && num_char < BUFFER_MAX) {
@@ -349,7 +349,13 @@ int32_t terminal_write(int32_t fd, const void* input_buf, int32_t nbytes) {
  *  OUTPUTS: NONE
  *  RETURN VALUE: returns 0
  */
-int32_t terminal_open (const uint8_t* fname){
+int32_t terminal_open (const uint8_t* filename){
+int i;
+    for(i = 0; i < BUFFER_SIZE; i++)
+    {
+        char_buffer[i] = 0;
+    }
+    clear();
     return 0;
 }
 
