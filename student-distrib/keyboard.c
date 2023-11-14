@@ -224,7 +224,12 @@ void get_char(char new_char) {
     if (new_char == '\n') {
         // Set enter_flag and add newline character
         enter_flag = 1;
-        char_buffer[char_count >= BUFFER_SIZE ? BUFFER_SIZE - 1 : char_count] = '\n';
+        //char_buffer[char_count >= BUFFER_SIZE ? BUFFER_SIZE - 1 : char_count] = '\n';
+        int i;
+        for(i = 0; i < BUFFER_MAX; i++)
+        {
+            char_buffer[i] = 0;
+        }
     } else if (new_char == BACKSPACE) {
         // Handle Backspace
         if (char_count > 0) {
