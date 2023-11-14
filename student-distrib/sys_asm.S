@@ -6,40 +6,66 @@ jump_table:
 
 .text
 .globl sys_call
-
+.align 4
+	
 sys_call:
-    // pushfl
-	pushfl
+
+	pushl %ecx
+	pushl %edx
+	pushl %ebx
+	pushl %esp
+	pushl %ebp
 	pushl %esi
 	pushl %edi
-	pushl %ebp
-	
-    cmpl    0x1, %eax
-    jb      ERR
-    cmpl    0xA, %eax // make sure to change for when we add in the rest of the syscalls 
-    ja      ERR
+	pushfl
 
 	pushl %edx
 	pushl %ecx
 	pushl %ebx
-	cli
+	
+    cmpl    $0x1, %eax
+    jb      ERR
+    cmpl    $0xA, %eax // make sure to change for when we add in the rest of the syscalls 
+    ja      ERR
+	
 	call *jump_table(, %eax, 4);
 
-	# pop the arguments
-	popl %ebx
-	popl %ecx
-	popl %edx
 
 done:
+	# pop the arguments
+	addl $12, %esp 
+
 	# restore caller save reg
-	popl %ebp
+	popfl
 	popl %edi
 	popl %esi
-	popfl
+	popl %ebp
+	popl %esp
+	popl %ebx
+	popl %edx
+	popl %ecx
 
 	iret
 
 ERR:    // out of index sys_call
     movl    $-1, %eax
     jmp     done
+
+
+halt_ret:
+    pushl %ebp
+    movl %esp, %ebp
+
+    xorl %ebx, %ebx
+    movl 16(%ebp), %ebx     # get third arg (status)
+    movl %ebx, %eax         
+
+    movl 12(%ebp), %ebx     # get second arg (esp)
+    movl %ebx, %esp   
+
+    movl 8(%ebp), %ebx       # get first arg (ep)
+    movl %ebx, %ebp
+
+    leave
+    ret
 

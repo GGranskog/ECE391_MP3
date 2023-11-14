@@ -175,16 +175,16 @@ int32_t sys_exec(uint8_t* cmd){
         pcb->fda[i].fop_table_ptr = &null_fop;
         pcb->fda[i].inode = 0;
         pcb->fda[i].file_pos = 0;
-        pcb->fda[i].flags = 1;
+        pcb->fda[i].flags = 0;
     }
 
     pcb->fda[0].fop_table_ptr = &terminal_fop;
-    pcb->fda[0].flags = 0;
+    pcb->fda[0].flags = 1;
     pcb->fda[0].file_pos = 0;
     pcb->fda[0].inode = 0;
 
     pcb->fda[1].fop_table_ptr = &terminal_fop;
-    pcb->fda[1].flags = 0;
+    pcb->fda[1].flags = 1;
     pcb->fda[1].file_pos = 0;
     pcb->fda[1].inode = 0;
     strncpy((int8_t*)pcb->arg, (int8_t*)(file_arg), STR_LEN);
@@ -198,36 +198,35 @@ int32_t sys_exec(uint8_t* cmd){
     pcb->eip = eip;
     pcb->esp = esp;
     tss.ss0 = KERNEL_DS;
-    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid) - 4;
+    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid);
     pcb->esp0 = tss.esp0;
 
     uint32_t ESP_asm, EBP_asm;
-    asm("\t movl %%esp, %0" : "=r"(ESP_asm));
-    asm("\t movl %%ebp, %0" : "=r"(EBP_asm));
+    asm volatile(
+        "movl %%esp, %0 ;"
+        "movl %%ebp, %0 ;"
+        : "=r" (ESP_asm) ,"=r" (EBP_asm) 
+    );
+
     pcb->task_ebp = EBP_asm;    
     pcb->task_esp = ESP_asm;
-    sti();
+    // sti();
 
     /* ---------------push IRET context to kernel--------------- */
     // push order:
     // User_DS, ESP, EFlags, User_CS, EIP
-    asm volatile ("	cli					\n\
-				  movw %0, %%ax			\n\
-				  movw %%ax, %%ds 		\n\
-				  pushl %0				\n\
-				  pushl %1 				\n\
-				  pushfl				\n\
-				  popl %%eax 			\n\
-				  orl %2, %%eax 		\n\
-				  pushl %%eax			\n\
-				  pushl %3 				\n\
-				  pushl %4 				\n\
-                  "
-				:
-				: "i"(USER_DS), "r"(esp), "r"(EFLAG), "i"(USER_CS), "r"(eip)
-				: "eax", "memory"
-				); 
-    asm volatile ("iret");
+        asm volatile(
+        "movw  %%ax, %%ds;"
+        "pushl %%eax;"
+        "pushl %%ebx;"
+        "pushfl  ;"
+        "pushl %%ecx;"
+        "pushl %%edx;"
+        :
+        : "a"(USER_DS), "b"(esp), "c"(USER_CS), "d"(eip)
+        : "cc", "memory"
+    );
+    asm volatile("IRET");
 
     /* ---------------return--------------- */
     return 0;

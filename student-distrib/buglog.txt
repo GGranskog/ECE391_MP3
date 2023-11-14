@@ -76,6 +76,11 @@ CHECKPOINT 3:
 
 Fixed previous dual input keyboard bug by adding assembly linkage
 
+bug 2:
+we keep page faulting in the iret line of our inline assembly of the execute syscall
+solution:   in out as linkage we had not put the $ symbol infront of out integer values to compare, 
+            and set the dpl of our idt table properly for system calls
+
 CHECKPOINT 4:
 
 Fixed previous backspace keyboard issue and fixed wrapping/scrolling

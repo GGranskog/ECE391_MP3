@@ -23,22 +23,20 @@ idt_init()
         idt[i].reserved0 = 0; // reserved values according to ISA
         idt[i].reserved1 = 1; // manual
         idt[i].reserved2 = 1;
-
-        if(i >= VECTOR_INTERRUPT_START && i <= VECTOR_INTERRUPT_END)
-            idt[i].reserved3 = 1;
-        else
-            idt[i].reserved3 = 0;
-
+        idt[i].dpl = 0;
+        idt[i].reserved3 = 0;
         idt[i].reserved4 = 0;
         idt[i].size = 1;
         idt[i].seg_selector = KERNEL_CS;
 
+        if(i >= VECTOR_INTERRUPT_START && i <= VECTOR_INTERRUPT_END){
+            idt[i].reserved3 = 1;
+        }
+        
         if(i == SYSCALL_VECTOR){
             idt[i].present = 1;
             idt[i].dpl = 3;
         }
-        else
-            idt[i].dpl = 0;
         if (i < 15){
         idt[i].present = 1; // will be set to 1 on SET_IDT_ENTRY call
         idt[i].reserved3 = 1;

@@ -167,8 +167,8 @@ void entry(unsigned long magic, unsigned long addr) {
 
 #ifdef RUN_TESTS
     /* Run tests */
-    launch_tests();
-    
+    // launch_tests();
+    clear();
     sys_exec((uint8_t *) "shell");
     //while(1){};
 #endif
