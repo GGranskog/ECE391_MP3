@@ -131,8 +131,10 @@ extern void keyboard_handler(void) {
         // Handle Backspace key
         if (num_char > 0) {
             putc(scan_to_ascii[scan_code][0]);
+            char_buffer[num_char-1] = '\0';
             //get_char(scan_to_ascii[scan_code][0]);
             --num_char;
+            --char_count;
         }
     } else if ((l_shift_flag || r_shift_flag) && num_char < BUFFER_MAX) {
         // Handle Shifted key with character limit
@@ -260,7 +262,7 @@ TERMINAL DRIVER READ/WRITE
 int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
     int bytes_read = 0;
     int i;
-
+    sti();
     // Wait for Enter key press
     while (enter_flag == 0) {}
 
