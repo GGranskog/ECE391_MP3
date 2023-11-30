@@ -250,21 +250,40 @@ int32_t sys_halt(uint8_t status){
         pcb->fda[i].file_pos = 0;
         pcb->fda[i].flags = 0;
         pcb->fda[i].fop_table_ptr = NULL;
-        pcb->fda[i].inode = -1;
+        pcb->fda[i].inode = 0;
     }
-    pid_stat[pcb->pid] = 0;
-    if (pcb->pid < 1){sys_exec((uint8_t*)"shell");}
+    pid_stat[cur_pid] = 0;
+    // pcb_t* parent_pcb = get_pcb();
+    if (cur_pid < 0){sys_exec((uint8_t*)"shell");}
+    cur_pid = pcb->parent_pid;
 
     int32_t esp, ebp;
     esp = pcb->esp;
     ebp = pcb->ebp;
 
-    uint32_t addr = (pcb->parent_pid*START_KERNEL)+KER_ADDR;
+    uint32_t addr = (cur_pid*START_KERNEL)+KER_ADDR;
     page_dir[32] = addr|PS|US|RW|P;
     flush_tlb();
     
     tss.ss0 = KERNEL_DS;
-    tss.esp0 = KER_ADDR - (TASK_SIZE * pcb->parent_pid) - 4;
+    // tss.ss0 = pcb->ss0;
+    tss.esp0 = KER_ADDR - (TASK_SIZE * cur_pid) - 4;
+    // tss.esp0 = parent_pcb->esp0;
+    sti();
+    uint16_t ret_stat = status & 0x00FF;
+    if (status == 0xF){ret_stat = 0xFF;}
+    /*
+    asm volatile(
+        "movl %0, %%esp ;"
+        "movl %1, %%ebp ;"
+        "xorl %%eax,%%eax;"
+        "movw %2, %%ax ;"
+        "leave;"
+        "ret;"
+        : 
+        : "r" (esp), "r" (ebp), "r"(ret_stat)
+        : "esp", "ebp", "eax"
+    );*/
 
     return 0;
 }
