@@ -265,7 +265,7 @@ TERMINAL DRIVER READ/WRITE
 int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
     int bytes_read = 0;
     int i;
-
+    sti();
     // Wait for Enter key press
     while (enter_flag == 0) {}
 
