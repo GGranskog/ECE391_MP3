@@ -269,21 +269,19 @@ int32_t sys_halt(uint8_t status){
     // tss.ss0 = pcb->ss0;
     tss.esp0 = KER_ADDR - (TASK_SIZE * cur_pid) - 4;
     // tss.esp0 = parent_pcb->esp0;
+    uint32_t ret_stat = (uint32_t)(status & 0x00FF);
     sti();
-    uint16_t ret_stat = status & 0x00FF;
-    if (status == 0xF){ret_stat = 0xFF;}
-    /*
+    
     asm volatile(
         "movl %0, %%esp ;"
         "movl %1, %%ebp ;"
-        "xorl %%eax,%%eax;"
-        "movw %2, %%ax ;"
+        "movl %2, %%eax ;"
         "leave;"
         "ret;"
         : 
         : "r" (esp), "r" (ebp), "r"(ret_stat)
         : "esp", "ebp", "eax"
-    );*/
+    );
 
     return 0;
 }
