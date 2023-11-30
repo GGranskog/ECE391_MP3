@@ -66,7 +66,7 @@ void fop_init(){
  * RETURN:  0
  * SIDE AFFECTS: executes command
  */
-int32_t sys_exec(uint8_t* cmd){
+int32_t sys_exec(const uint8_t* cmd){
     /* ---------------define function parameters--------------- */
     int i=0;            // loop var
     int cmd_str = 0;    // start of cmd 
@@ -253,7 +253,7 @@ int32_t sys_halt(uint8_t status){
         pcb->fda[i].inode = -1;
     }
     pid_stat[pcb->pid] = 0;
-    if (pcb->pid <= 2){sys_exec((uint8_t*)"shell");}
+    if (pcb->pid < 1){sys_exec((uint8_t*)"shell");}
 
     int32_t esp, ebp;
     esp = pcb->esp;

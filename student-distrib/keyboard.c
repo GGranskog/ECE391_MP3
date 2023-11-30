@@ -131,8 +131,10 @@ extern void keyboard_handler(void) {
         // Handle Backspace key
         if (num_char > 0) {
             putc(scan_to_ascii[scan_code][0]);
+            char_buffer[num_char-1] == '\0';
             //get_char(scan_to_ascii[scan_code][0]);
             --num_char;
+            --char_count;
         }
     } else if ((l_shift_flag || r_shift_flag) && num_char < BUFFER_MAX) {
         // Handle Shifted key with character limit
@@ -272,11 +274,11 @@ int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
     cli();
 
     // Ensure nbytes is within buffer size
-    nbytes = (nbytes < BUFFER_SIZE) ? nbytes : BUFFER_SIZE;
+    // nbytes = (nbytes < BUFFER_SIZE) ? nbytes : BUFFER_SIZE;
 
-    for (i = 0; i < nbytes; ++i) {
+    for (i = 0; i < BUFFER_SIZE; ++i) {
         ((char*)buf)[i] = char_buffer[i];
-        char_buffer[i] = ' ';
+        char_buffer[i] = '\0';
 
         // Exit if newline encountered
         if (((char*)buf)[i] == '\n') {
@@ -293,6 +295,7 @@ int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
     }
 
     // If nbytes exceeds buffer size, continue filling the buffer
+    /*
     if (nbytes >= BUFFER_SIZE) {
         for (i = nbytes; i < BUFFER_SIZE; ++i) {
             ((char*)buf)[i] = char_buffer[i];
@@ -305,7 +308,7 @@ int32_t terminal_read(int32_t fd, void* buf, int32_t nbytes) {
             }
         }
     }
-
+    */
     char_count = 0;  // Reset char_buffer position
     enter_flag = 0;
     sti();
