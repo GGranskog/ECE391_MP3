@@ -32,10 +32,10 @@ sys_call:
 
 
 done:
-	# pop the arguments
+	// pop the arguments
 	addl $12, %esp 
 
-	# restore caller save reg
+	// restore caller save reg
 	popfl
 	popl %edi
 	popl %esi
@@ -57,13 +57,13 @@ halt_ret:
     movl %esp, %ebp
 
     xorl %ebx, %ebx
-    movl 16(%ebp), %ebx     # get third arg (status)
+    movl 16(%ebp), %ebx  // 3rd arg(status)
     movl %ebx, %eax         
 
-    movl 12(%ebp), %ebx     # get second arg (esp)
+    movl 12(%ebp), %ebx  // 2nd arg(esp)
     movl %ebx, %esp   
 
-    movl 8(%ebp), %ebx       # get first arg (ep)
+    movl 8(%ebp), %ebx   // 1sts arg(ebp)
     movl %ebx, %ebp
 
     leave

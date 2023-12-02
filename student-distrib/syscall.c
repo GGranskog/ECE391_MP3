@@ -1,5 +1,5 @@
 #include "syscall.h"
-
+#include "sys_asm.h"
 
 
 #define FILE_ARRAY_SIZE 8
@@ -16,7 +16,6 @@ uint32_t cur_pid = 0;
 
 void flush_tlb();
 
-
 int32_t null_read(int32_t fd, void* buf, int32_t nbytes);
 int32_t null_read(int32_t fd, void* buf, int32_t nbytes){return -1;}
 
@@ -28,35 +27,6 @@ int32_t null_open(const uint8_t* filename){return -1;}
 
 int32_t null_close(int32_t filename);
 int32_t null_close(int32_t filename){return -1;}
-
-
-// initialize all of the FOP tables for each of the drivers
-void fop_init(){
-    terminal_fop.sys_close  = terminal_close;
-    terminal_fop.sys_open   = terminal_open;
-    terminal_fop.sys_read   = terminal_read;
-    terminal_fop.sys_write  = terminal_write;
-
-    rtc_fop.sys_close   = rtc_close;
-    rtc_fop.sys_open    = rtc_open;
-    rtc_fop.sys_read    = rtc_read;
-    rtc_fop.sys_write   = rtc_write;
-
-    file_fop.sys_close  = file_close;
-    file_fop.sys_open   = file_open;
-    file_fop.sys_read   = file_read;
-    file_fop.sys_write  = file_write;
-
-    dir_fop.sys_close   = dir_close;
-    dir_fop.sys_open    = dir_open;
-    dir_fop.sys_read    = dir_read;
-    dir_fop.sys_write   = dir_write;
-
-    null_fop.sys_close  = null_close;
-    null_fop.sys_open   = null_open;
-    null_fop.sys_read   = null_read;
-    null_fop.sys_write  = null_write;
-}
 
 /*
  * Exec
@@ -84,7 +54,7 @@ int32_t sys_exec(const uint8_t* cmd){
     uint8_t  elf[4];
     uint32_t eip;
     uint32_t esp;
-    uint32_t ebp;
+    uint32_t ebp = 0;
 
     /* ---------------parse the args--------------- */
     for (i=0; i<STR_LEN; i++){
@@ -158,11 +128,11 @@ int32_t sys_exec(const uint8_t* cmd){
     pcb_t* pcb = get_pcb();
     if (pcb == NULL){return -1;}
     pcb->pid = cur_pid;
-	pcb->esp = esp;
-	pcb->ebp = ebp;
+	// pcb->esp = esp;
+	// pcb->ebp = ebp;
 	//store the prev_pid's esp0 and ss0
-	pcb->esp0 = tss.esp0;
-	pcb->ss0 = tss.ss0;
+	// pcb->esp0 = tss.esp0;
+	// pcb->ss0 = tss.ss0;
 
     if(cur_pid != 0 ){
         pcb->parent_pid = parent;
@@ -198,7 +168,7 @@ int32_t sys_exec(const uint8_t* cmd){
     pcb->eip = eip;
     pcb->esp = esp;
     tss.ss0 = KERNEL_DS;
-    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid);
+    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid) - 4;
     pcb->esp0 = tss.esp0;
 
     uint32_t ESP_asm, EBP_asm;
@@ -242,7 +212,7 @@ int32_t sys_exec(const uint8_t* cmd){
  * SIDE AFFECTS: halts program when finished or error occurs
  */
 int32_t sys_halt(uint8_t status){
-    cli();
+    // cli();
     pcb_t* pcb = get_pcb();
     if (pcb == NULL){return -1;}
     int i;
@@ -252,26 +222,31 @@ int32_t sys_halt(uint8_t status){
         pcb->fda[i].fop_table_ptr = NULL;
         pcb->fda[i].inode = 0;
     }
+    if (pcb->pid < 1){
+        sys_exec((uint8_t*)"shell");
+    }
     pid_stat[cur_pid] = 0;
-    // pcb_t* parent_pcb = get_pcb();
-    if (cur_pid < 0){sys_exec((uint8_t*)"shell");}
     cur_pid = pcb->parent_pid;
+    pcb_t* parent_pcb = get_pcb();
+    parent = parent_pcb->parent_pid;
 
     int32_t esp, ebp;
     esp = pcb->esp;
-    ebp = pcb->ebp;
+    ebp = pcb->eip;
+    // esp = pcb->task_esp;
+    // ebp = pcb->task_ebp;
 
     uint32_t addr = (cur_pid*START_KERNEL)+KER_ADDR;
     page_dir[32] = addr|PS|US|RW|P;
     flush_tlb();
     
     tss.ss0 = KERNEL_DS;
+    // tss.esp0 = KER_ADDR - (TASK_SIZE * cur_pid) - 4;
+    tss.esp0 = parent_pcb->esp0;
     // tss.ss0 = pcb->ss0;
-    tss.esp0 = KER_ADDR - (TASK_SIZE * cur_pid) - 4;
-    // tss.esp0 = parent_pcb->esp0;
-    uint32_t ret_stat = (uint32_t)(status & 0x00FF);
-    sti();
-    
+
+    int32_t retval = status & 0xFF;  
+    // sti();
     asm volatile(
         "movl %0, %%esp ;"
         "movl %1, %%ebp ;"
@@ -279,11 +254,10 @@ int32_t sys_halt(uint8_t status){
         "leave;"
         "ret;"
         : 
-        : "r" (esp), "r" (ebp), "r"(ret_stat)
+        : "r" (esp), "r" (ebp), "r"(retval)
         : "esp", "ebp", "eax"
     );
-
-    return 0;
+    return status;
 }
 
 
@@ -515,6 +489,7 @@ int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
     return ((pcb->fda[fd].fop_table_ptr->sys_write)(fd,buf,nbytes));
 }
 
+
 /*
  * get_pcb
  * DESCRIPTION: grabs the pcb for the current process
@@ -525,6 +500,41 @@ int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
 pcb_t* get_pcb(){
     return (pcb_t*)(LEVEL1- TASK_SIZE*(cur_pid+1));
 }
+
+
+/*   
+ *  fop_init
+ *  DESCRIPTION: initialize all of the FOP tables for each of the drivers
+ *  INPUT: NONE
+ *  OUTPUT: NONE
+ */
+void fop_init(){
+    terminal_fop.sys_close  = terminal_close;
+    terminal_fop.sys_open   = terminal_open;
+    terminal_fop.sys_read   = terminal_read;
+    terminal_fop.sys_write  = terminal_write;
+
+    rtc_fop.sys_close   = rtc_close;
+    rtc_fop.sys_open    = rtc_open;
+    rtc_fop.sys_read    = rtc_read;
+    rtc_fop.sys_write   = rtc_write;
+
+    file_fop.sys_close  = file_close;
+    file_fop.sys_open   = file_open;
+    file_fop.sys_read   = file_read;
+    file_fop.sys_write  = file_write;
+
+    dir_fop.sys_close   = dir_close;
+    dir_fop.sys_open    = dir_open;
+    dir_fop.sys_read    = dir_read;
+    dir_fop.sys_write   = dir_write;
+
+    null_fop.sys_close  = null_close;
+    null_fop.sys_open   = null_open;
+    null_fop.sys_read   = null_read;
+    null_fop.sys_write  = null_write;
+}
+
 
 /*
  * flush_tlb
