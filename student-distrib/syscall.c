@@ -518,6 +518,30 @@ int32_t sys_getargs(uint32_t* buf, int32_t nbytes)
 
 }
 
+/*
+ * vidmap
+ * DESCRIPTION: maps vid mem into user at a given virtual address
+ * INPUT:   screen_ptr - pointer to start of vid mem
+ * OUTPUT:  none
+ * RETURN:  0 on success, -1 on fail
+ * SIDE EFFECTS: address of vid map
+ */
+ int32_t sys_vidmap(uint8_t ** screen_ptr){
+
+    //check if ptr is valid
+    if(screen_ptr == NULL || screen_ptr == PAGE_SIZE){
+        return -1;
+    }
+
+    //Virtual Address to Vid Mem
+    new4KBPage(vidmap_startaddr, vir_startaddr);
+
+    *screen_ptr = (uint8_t *) vidmap_startaddr; //132MB 
+
+    return vidmap_startaddr;
+
+ }
+
 
 /*
  * get_pcb

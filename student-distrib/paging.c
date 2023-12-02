@@ -62,6 +62,33 @@ void cr3(){
 
 }
 
+/*
+ *  new4KBPage
+ *  Description: new 4KB page mapping for the program
+ *  Inputs: vir_address and phys_address
+ *  Outputs: none
+ *  Return Value: new page added to dir
+ */
+void new4KBPage(uint32_t vir_address, uint32_t phys_address){
+    uint32_t newpage_idx = vir_address/START_KERNEL; // vir address / 4MB
+    page_dir[newpage_idx] = (uint32_t) page_table | US | RW | P;
+    video_mem[0] = phys_address | US | RW | P;
+
+    //TLB Flush 
+
+    asm volatile(
+
+        "movl %%cr3, %%eax;"
+        "movl %%eax, %%cr3;"
+        :
+        :
+        : "eax"
+
+    );
+
+
+}
+
 /* courtesy of https://wiki.osdev.org/Paging 
 void map_page(void *physaddr, void *virtualaddr, unsigned int flags) {
     // Make sure that both addresses are page-aligned.

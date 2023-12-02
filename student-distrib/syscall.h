@@ -22,6 +22,9 @@
 #define MAG_EXEC_2  0x4c
 #define MAG_EXEC_3  0x46
 
+#define vir_startaddr = 0x08000000 // 128MB
+#define vidmap_startaddr = 0x08400000 // 132MB
+
 #define VIRT_ADDR VIRTUAL //virtual address
 
 typedef struct fop_table{
@@ -76,6 +79,8 @@ int32_t sys_open(const uint8_t* filename);
 int32_t sys_close(int32_t fd);
 int32_t sys_read(int32_t fd, void* buf, int32_t nbytes);
 int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes);
+int32_t sys_getargs(uint32_t *  buf, int32_t nbytes);
+int32_t sys_vidmap(uint8_t ** screen_ptr);
 
 
 #endif
