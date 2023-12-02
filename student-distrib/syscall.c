@@ -54,7 +54,7 @@ int32_t sys_exec(const uint8_t* cmd){
     uint8_t  elf[4];
     uint32_t eip;
     uint32_t esp;
-    uint32_t ebp = 0;
+    uint32_t ebp;
 
     /* ---------------parse the args--------------- */
     for (i=0; i<STR_LEN; i++){
@@ -128,11 +128,11 @@ int32_t sys_exec(const uint8_t* cmd){
     pcb_t* pcb = get_pcb();
     if (pcb == NULL){return -1;}
     pcb->pid = cur_pid;
-	// pcb->esp = esp;
-	// pcb->ebp = ebp;
+	pcb->esp = esp;
+	pcb->ebp = ebp;
 	//store the prev_pid's esp0 and ss0
-	// pcb->esp0 = tss.esp0;
-	// pcb->ss0 = tss.ss0;
+	pcb->esp0 = tss.esp0;
+	pcb->ss0 = tss.ss0;
 
     if(cur_pid != 0 ){
         pcb->parent_pid = parent;
@@ -168,7 +168,7 @@ int32_t sys_exec(const uint8_t* cmd){
     pcb->eip = eip;
     pcb->esp = esp;
     tss.ss0 = KERNEL_DS;
-    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid) - 4;
+    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid);
     pcb->esp0 = tss.esp0;
 
     uint32_t ESP_asm, EBP_asm;
@@ -203,6 +203,7 @@ int32_t sys_exec(const uint8_t* cmd){
 }
 
 
+
 /*
  * Halt
  * DESCRIPTION: halts execution of program
@@ -231,18 +232,18 @@ int32_t sys_halt(uint8_t status){
     parent = parent_pcb->parent_pid;
 
     int32_t esp, ebp;
-    esp = pcb->esp;
-    ebp = pcb->eip;
-    // esp = pcb->task_esp;
-    // ebp = pcb->task_ebp;
+    // esp = pcb->esp;
+    // ebp = pcb->eip;
+    esp = pcb->task_esp;
+    ebp = pcb->task_ebp;
 
     uint32_t addr = (cur_pid*START_KERNEL)+KER_ADDR;
     page_dir[32] = addr|PS|US|RW|P;
     flush_tlb();
     
     tss.ss0 = KERNEL_DS;
-    // tss.esp0 = KER_ADDR - (TASK_SIZE * cur_pid) - 4;
-    tss.esp0 = parent_pcb->esp0;
+    tss.esp0 = KER_ADDR - (TASK_SIZE * parent_pcb->pid) - 4;
+    // tss.esp0 = parent_pcb->esp0;
     // tss.ss0 = pcb->ss0;
 
     int32_t retval = status & 0xFF;  
@@ -252,11 +253,11 @@ int32_t sys_halt(uint8_t status){
         "movl %1, %%ebp ;"
         "movl %2, %%eax ;"
         "leave;"
-        "ret;"
         : 
         : "r" (esp), "r" (ebp), "r"(retval)
         : "esp", "ebp", "eax"
     );
+    asm volatile("ret");
     return status;
 }
 
