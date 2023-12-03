@@ -131,7 +131,7 @@ extern void keyboard_handler(void) {
         // Handle Backspace key
         if (num_char > 0) {
             putc(scan_to_ascii[scan_code][0]);
-            char_buffer[num_char-1] == '\0';
+            char_buffer[num_char-1] = '\0';
             //get_char(scan_to_ascii[scan_code][0]);
             --num_char;
             --char_count;

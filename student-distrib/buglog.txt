@@ -89,10 +89,16 @@ time: 10 minutes
 
 bug 4:
 we cant type to the shell after executing the first shell
-solution:   
-time: 
+solution: needed to enable interrupts within our keyboard read
+time: 5 minutes
 
 CHECKPOINT 4:
+
+bug 5:
+page faulting in our halt syscall
+solution: correctly saved the esp and ebp registers to variables to later be used
+time: 4 days
+
 
 Fixed previous backspace keyboard issue and fixed wrapping/scrolling
 
