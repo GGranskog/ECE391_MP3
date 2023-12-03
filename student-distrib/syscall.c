@@ -507,7 +507,7 @@ int32_t sys_getargs(uint32_t* buf, int32_t nbytes)
     // check valid inputs
     if(buf == NULL || nbytes <= 0) return FAIL;
     // check if there are args
-    if(pcb->args[0] == NULL) return FAIL;
+    if(pcb->arg[0] == NULL) return FAIL;
     //check if buf is > nbytes
     if(strlen((const int8_t *) pcb->arg) > nbytes){
         return FAIL;  
