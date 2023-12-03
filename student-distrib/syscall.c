@@ -529,7 +529,7 @@ int32_t sys_getargs(uint32_t* buf, int32_t nbytes)
  int32_t sys_vidmap(uint8_t ** screen_ptr){
 
     //check if ptr is valid
-    if(screen_ptr == NULL || screen_ptr == PAGE_SIZE){
+    if(screen_ptr == NULL || screen_ptr == (uint8_t **)PAGE_SIZE){
         return -1;
     }
 
