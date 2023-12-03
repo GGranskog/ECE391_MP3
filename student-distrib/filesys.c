@@ -164,7 +164,7 @@ int32_t dir_read (int32_t fd, void* buf, int32_t nbytes){
     char* file_name;                        //file name
 
     char buf_string[STR_LEN];               
-    int idx, i;                             //index loops
+    int idx;                                //index loops
 
     if (dir_length < nbytes){
         dir_length = STR_LEN;           //  make sure within bounds 
@@ -177,9 +177,9 @@ int32_t dir_read (int32_t fd, void* buf, int32_t nbytes){
 
     file_name = boot_block->direntries[dentry_index++].fname;           // file name in dentry
 
-    for(idx = 0; i < dir_length; idx++){
+    for(idx = 0; idx < dir_length; idx++){
 
-        buf_string[i] = file_name[i];                       //copying into the string bufer
+        buf_string[idx] = file_name[idx];                       //copying into the string bufer
 
     }
 
