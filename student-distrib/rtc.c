@@ -115,7 +115,7 @@ int32_t set_rtc_freq(int32_t freq)
  */
 int32_t rtc_open(const uint8_t* filename)
 {
-    set_rtc_freq(2);
+    set_rtc_freq(32);
     return 0;
 }
 
@@ -161,9 +161,11 @@ int32_t rtc_read(int32_t fd, void* buf, int32_t nbytes)
  */
 int32_t rtc_write(int32_t fd, const void* buf, int32_t nbytes)
 {
-    if(set_rtc_freq(fd))
+    const int32_t* buf32 = (int32_t*)buf;
+    int32_t buffer = *buf32;
+    if(set_rtc_freq(buffer))
     {
-        return fd;
+        return buffer;
     }
     return -1;
 }
