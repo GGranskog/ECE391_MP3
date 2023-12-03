@@ -168,13 +168,13 @@ int32_t sys_exec(const uint8_t* cmd){
     pcb->eip = eip;
     pcb->esp = esp;
     tss.ss0 = KERNEL_DS;
-    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid);
+    tss.esp0 = KER_ADDR - (TASK_SIZE*cur_pid) - 4;
     pcb->esp0 = tss.esp0;
 
     uint32_t ESP_asm, EBP_asm;
     asm volatile(
         "movl %%esp, %0 ;"
-        "movl %%ebp, %0 ;"
+        "movl %%ebp, %1 ;"
         : "=r" (ESP_asm) ,"=r" (EBP_asm) 
     );
 
