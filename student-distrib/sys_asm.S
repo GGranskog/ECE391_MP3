@@ -2,7 +2,7 @@
 
 .data
 jump_table:
-    .long 0x0, sys_halt, sys_exec, sys_read, sys_write, sys_open, sys_close, sys_getargs, sys_vidmap
+    .long 0x0, sys_halt, sys_exec, sys_read, sys_write, sys_open, sys_close, sys_getargs, sys_vidmap, set_handler, sigreturn
 
 .text
 .globl sys_call

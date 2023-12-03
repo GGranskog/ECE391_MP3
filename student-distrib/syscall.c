@@ -552,6 +552,33 @@ int32_t sys_getargs(uint32_t* buf, int32_t nbytes)
 
  }
 
+/*
+ * set_handler
+ * DESCRIPTION: Changes the default action taken when a signal is received
+ * INPUT:   signum, - which signal’s handler to change
+ *          handler_address - points to a user-level function to be run when
+                            that signal is received
+ * OUTPUT:  none
+ * RETURN:  0 on success, -1 on fail
+ * SIDE EFFECTS: changes signal handler
+ */
+int32_t set_handler(int32_t signum, void* handler_address){
+    return FAIL;
+}
+
+
+/*
+ * sigreturn
+ * DESCRIPTION: Copy the hardware context that was on the user-level stack back onto the processor
+ * INPUT:   NONE
+ * OUTPUT:  none
+ * RETURN:  0 on success, -1 on fail
+ * SIDE EFFECTS: 
+ */
+int32_t sigreturn(void){
+    return FAIL;
+}
+
 
 /*
  * get_pcb

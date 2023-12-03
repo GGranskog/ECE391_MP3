@@ -99,6 +99,16 @@ page faulting in our halt syscall
 solution: correctly saved the esp and ebp registers to variables to later be used
 time: 4 days
 
+bug 6:
+cat would not output anything even for the '.' test where it should be like the ls command
+solution: bug in our directory read where the number of bytes read wasnt being updated properly and returned
+time: 2 hours
+
+bug 7:
+grep not working as intended
+solution: 
+time: 
+
 
 Fixed previous backspace keyboard issue and fixed wrapping/scrolling
 
