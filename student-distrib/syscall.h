@@ -22,8 +22,8 @@
 #define MAG_EXEC_2  0x4c
 #define MAG_EXEC_3  0x46
 
-#define vir_startaddr 0x08000000 // 128MB
-#define vidmap_startaddr 0x08400000 // 132MB
+#define vir_startaddr  0x08000000 // 128MB
+#define vidmap_startaddr  0x08400000 // 132MB
 
 #define VIRT_ADDR VIRTUAL //virtual address
 
