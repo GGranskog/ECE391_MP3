@@ -64,18 +64,18 @@ int32_t sys_exec(const uint8_t* cmd){
     }
     if (cmd_len == 0){return -1;} // validate that something was typed
 
-    for (i=0; i< cmd_len; i++){ // parsing cmd
+    for (i=0; i< STR_LEN; i++){ // parsing cmd
         if (cmd[i] != ' '){ // cmd should be the first word, everything else should be an arg to the cmd
             file_cmd[i] = cmd[i];
             cmd_str++;
             // arg_str++;
         }else{
-            file_cmd[i] = NULL;
+            file_cmd[i] = '\0';
             cmd_str++;
             break;
         }
     }
-    for (i=cmd_str+1; i< cmd_len; i++){
+    for (i=cmd_str; i< cmd_len; i++){
         if (cmd[i] != ' '){
             for (arg_idx=cmd_str; arg_idx<cmd_len; arg_idx++){
                 file_arg[arg_idx-cmd_str] = cmd[arg_idx];
@@ -498,7 +498,7 @@ int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
     if( (int)buf < USER_SPACE_START || (int)buf + nbytes > USER_SPACE_END -4 ){return -1;}
 
     /* Call the corresponding write function base on the file type */
-    return ((pcb->fda[fd].fop_table_ptr->sys_write)(fd,buf,nbytes));
+    return (pcb->fda[fd].fop_table_ptr->sys_write(fd,buf,nbytes));
 }
 
 /*

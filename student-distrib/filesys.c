@@ -160,10 +160,10 @@ int32_t dir_read (int32_t fd, void* buf, int32_t nbytes){
         return 0;
 
     }
-    int dir_length;                         //length of the file
+    int dir_length = 0;                         //length of the file
     char* file_name;                        //file name
 
-    char buf_string[STR_LEN];               
+    char buf_string[STR_LEN+1];               
     int idx;                                //index loops
 
     if (dir_length < nbytes){
@@ -182,7 +182,7 @@ int32_t dir_read (int32_t fd, void* buf, int32_t nbytes){
         buf_string[idx] = file_name[idx];                       //copying into the string bufer
 
     }
-
+    buf_string[dir_length+1] = '\n';
     strncpy((int8_t*) buf, (int8_t*)buf_string, dir_length);            
 
     return dir_length;
