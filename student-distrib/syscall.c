@@ -71,13 +71,14 @@ int32_t sys_exec(const uint8_t* cmd){
             // arg_str++;
         }else{
             file_cmd[i] = NULL;
+            cmd_str++;
             break;
         }
-    }    
+    }
     for (i=cmd_str+1; i< cmd_len; i++){
         if (cmd[i] != ' '){
             for (arg_idx=cmd_str; arg_idx<cmd_len; arg_idx++){
-                file_arg[arg_idx] = cmd[arg_idx];
+                file_arg[arg_idx-cmd_str] = cmd[arg_idx];
             }
             break;
         }else{
@@ -313,8 +314,17 @@ int32_t sys_open(const uint8_t* filename){
     /* if it is rtc, set it to -1 */
     if (cur_dentry.ftype == 0){
         pcb->fda[fd].inode = -1;
+        pcb->fda[fd].fop_table_ptr = &rtc_fop;
     }else{pcb->fda[fd].inode = cur_dentry.inode_num;}
     
+    if (cur_dentry.ftype == 1){
+         pcb->fda[fd].fop_table_ptr = &dir_fop;
+    }
+
+    if (cur_dentry.ftype == 2){
+         pcb->fda[fd].fop_table_ptr = &file_fop;
+    }
+
     /* if corresponding action fails, we shoudl fail too */
     if(FAIL == pcb->fda[fd].fop_table_ptr->sys_open(filename)){
         // file_array[fd].flags = 0;    

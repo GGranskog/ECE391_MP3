@@ -115,7 +115,7 @@ int32_t set_rtc_freq(int32_t freq)
  */
 int32_t rtc_open(const uint8_t* filename)
 {
-    set_rtc_freq(32);
+    set_rtc_freq(2);
     return 0;
 }
 
