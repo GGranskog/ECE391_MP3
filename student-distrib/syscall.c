@@ -8,6 +8,7 @@
 #define UESP  0x0083FFFFC // 128MB+4MB-4
 #define EFLAG 0x200
 #define FAIL -1
+#define PASS 0
 
 uint32_t pid_stat[6] = {0,0,0,0,0,0};
 uint32_t parent  = 0;
@@ -489,6 +490,57 @@ int32_t sys_write(int32_t fd, const void* buf, int32_t nbytes){
     /* Call the corresponding write function base on the file type */
     return ((pcb->fda[fd].fop_table_ptr->sys_write)(fd,buf,nbytes));
 }
+
+/*
+ * getargs
+ * DESCRIPTION: gets arguments from command
+ * INPUT:   buf - buffer to copy args into
+ *          nbytes - number of bytes in args
+ * OUTPUT:  copy args to buffer
+ * RETURN:  0 on success, -1 on fail
+ * SIDE EFFECTS: modifies buf
+ */
+
+int32_t sys_getargs(uint32_t* buf, int32_t nbytes)
+{
+    pcb_t* pcb = get_pcb();
+    // check valid inputs
+    if(buf == NULL || nbytes <= 0) return FAIL;
+    // check if there are args
+    if(pcb->args[0] == NULL) return FAIL;
+    //check if buf is > nbytes
+    if(strlen((const int8_t *) pcb->arg) > nbytes){
+        return FAIL;  
+    }
+    // copy args to buffer
+    memcpy(buf, pcb->arg, nbytes);
+    return PASS;
+
+}
+
+/*
+ * vidmap
+ * DESCRIPTION: maps vid mem into user at a given virtual address
+ * INPUT:   screen_ptr - pointer to start of vid mem
+ * OUTPUT:  none
+ * RETURN:  0 on success, -1 on fail
+ * SIDE EFFECTS: address of vid map
+ */
+ int32_t sys_vidmap(uint8_t ** screen_ptr){
+
+    //check if ptr is valid
+    if(screen_ptr == NULL || screen_ptr == PAGE_SIZE){
+        return -1;
+    }
+
+    //Virtual Address to Vid Mem
+    new4KBPage(vidmap_startaddr, vir_startaddr);
+
+    *screen_ptr = (uint8_t *) vidmap_startaddr; //132MB 
+
+    return vidmap_startaddr;
+
+ }
 
 
 /*

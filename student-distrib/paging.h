@@ -47,6 +47,8 @@ uint32_t page_dir[PDE]  __attribute__((aligned(PDE_SIZE)));
 uint32_t page_table[PTE] __attribute__((aligned(PDE_SIZE)));
 uint32_t video_mem[PTE] __attribute__((aligned(PDE_SIZE)));
 
+void new4KBPage(uint32_t vir_address, uint32_t phys_address);
+
 void init_page();
 //void paging();
 //void map_user();
