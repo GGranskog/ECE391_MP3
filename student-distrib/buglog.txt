@@ -109,6 +109,13 @@ grep not working as intended
 solution: 
 time: 
 
+CHECKPOINT 5:
+
+bug 8:
+we were very behind and thus were not able to work on scheduling and multiple terminals
+solution: give up
+time: now
+
 
 Fixed previous backspace keyboard issue and fixed wrapping/scrolling
 
